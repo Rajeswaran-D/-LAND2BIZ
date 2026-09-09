@@ -1,0 +1,97 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { GlobalJourneyIndicator } from '@/components/ui/GlobalJourneyIndicator';
+import { BeginnerHelperBanner } from '@/components/ui/BeginnerHelperBanner';
+import { BusinessSpecificGroundCheck } from '@/components/final/BusinessSpecificGroundCheck';
+import { FinalPreInvestmentCertificate } from '@/components/final/FinalPreInvestmentCertificate';
+import { WhatIfScenarioSimulator } from '@/components/final/WhatIfScenarioSimulator';
+import { PostDecisionInteractiveDeck } from '@/components/final/PostDecisionInteractiveDeck';
+import { ArrowLeft, Sparkles } from 'lucide-react';
+import Link from 'next/link';
+
+export default function FinalPage() {
+  const [selectedBusiness, setSelectedBusiness] = useState<string>(
+    'Solar Cold Storage & Preservation Unit'
+  );
+  const [isFullyVerified, setIsFullyVerified] = useState<boolean>(true);
+  const [verifiedCount, setVerifiedCount] = useState<number>(5);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedData = sessionStorage.getItem('land2biz_onboarding_data');
+      if (storedData) {
+        try {
+          const parsed = JSON.parse(storedData);
+          if (parsed.selectedBusinessTitle) {
+            setSelectedBusiness(parsed.selectedBusinessTitle);
+          }
+        } catch (e) {
+          console.error('Failed to parse onboarding data', e);
+        }
+      }
+    }
+  }, []);
+
+  const handleVerificationChange = (fullyVerified: boolean, count: number) => {
+    setIsFullyVerified(fullyVerified);
+    setVerifiedCount(count);
+  };
+
+  return (
+    <div className="min-h-screen bg-transparent text-slate-900 pb-20">
+      <GlobalJourneyIndicator currentStep={8} />
+
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
+        {/* Top Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-200/80 pb-6">
+          <div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold uppercase tracking-wider mb-2">
+              <Sparkles className="w-3.5 h-3.5" /> Step 7 of 7 • Final Land Business Pass
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
+              Final Land Check & Business Pass
+            </h1>
+            <p className="text-xs sm:text-sm text-gray-600 mt-1">
+              Confirm 5 simple physical items on your land to get your official business certificate.
+            </p>
+          </div>
+
+          <Link
+            href="/finance"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-600 hover:text-gray-900 bg-white border border-gray-200 px-3.5 py-2 rounded-xl shadow-sm hover:shadow transition-all self-start sm:self-auto"
+          >
+            <ArrowLeft className="w-4 h-4" /> Back to Money & Subsidy
+          </Link>
+        </div>
+
+        {/* Beginner Helper Banner */}
+        <BeginnerHelperBanner
+          stepNumber={7}
+          simpleTitle="Final Land Certificate"
+          whatToDo="Tick the 5 land check boxes, download your official certificate, and click the supplier contacts or bank report buttons."
+          whyItMatters="You can take this official certificate directly to any nationalized bank branch to apply for your loan and 35% subsidy."
+        />
+
+        {/* 1. Business-Specific Ground Verification Checkboxes */}
+        <BusinessSpecificGroundCheck
+          businessTitle={selectedBusiness}
+          onVerificationChange={handleVerificationChange}
+        />
+
+        {/* 2. Official Pre-Investment Decision Certificate */}
+        <FinalPreInvestmentCertificate
+          businessTitle={selectedBusiness}
+          isFullyVerified={isFullyVerified}
+          verifiedCount={verifiedCount}
+        />
+
+        {/* 3. Interactive Post-Decision Action Deck (Modals & Actions) */}
+        <PostDecisionInteractiveDeck businessTitle={selectedBusiness} />
+
+        {/* 4. What-If Scenario Simulator */}
+        <WhatIfScenarioSimulator />
+      </main>
+    </div>
+  );
+}

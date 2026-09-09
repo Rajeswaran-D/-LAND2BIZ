@@ -1,0 +1,29 @@
+{
+  "schemes": [
+    {
+      "id": "micro_finance_01",
+      "version": "1.0",
+      "name": "Micro Finance Scheme",
+      "max_project_cost": 140000,
+      "interest_rate": 0.065,
+      "tenure_years": 3,
+      "moratorium_months": 3,
+      "effective_date": "2026-01-01",
+      "source": "SIH_2026_GUIDELINES",
+      "verification_status": "VERIFIED"
+    },
+    {
+      "id": "term_loan_01",
+      "version": "1.0",
+      "name": "Term Loan Scheme",
+      "min_project_cost": 140000.01,
+      "max_project_cost": 5000000,
+      "interest_rate": 0.08,
+      "tenure_years": 7,
+      "moratorium_months": 6,
+      "effective_date": "2026-01-01",
+      "source": "SIH_2026_GUIDELINES",
+      "verification_status": "VERIFIED"
+    }
+  ]
+}
