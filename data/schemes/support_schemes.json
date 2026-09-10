@@ -1,0 +1,96 @@
+{
+  "version": "1.0",
+  "effective_date": "2026-01-01",
+  "verification_status": "VERIFIED",
+  "source_note": "Curated from official portals. PMEGP via kvic/pmegp.msme.gov.in: 15% urban general, 25% rural general and urban special, 35% rural special; caps Rs 50L manufacturing / Rs 20L services. PMFME via pmfme.mofpi.gov.in: 35% credit-linked cap Rs 10L, min 10% beneficiary share. MUDRA via financialservices.gov.in: Shishu<=50k, Kishore 50k-5L, Tarun 5L-10L, Tarun Plus 10L-20L (only after successful Tarun repayment). Stand-Up India via standupmitra.in: Rs 10L-1Cr greenfield, SC/ST/women, 51% holding.",
+  "schemes": [
+    {
+      "id": "pmfme_individual",
+      "name": "PM Formalisation of Micro Food Processing Enterprises (PMFME) — Individual units",
+      "ministry": "Ministry of Food Processing Industries",
+      "benefit_type": "credit_linked_capital_subsidy",
+      "subsidy_pct": 35,
+      "max_subsidy_inr": 1000000,
+      "min_beneficiary_share_pct": 10,
+      "eligible_categories": ["food_processing", "cold_storage_processing", "dairy_processing", "agri_processing", "flour_spice_mill"],
+      "applies_to": "New or upgraded micro food-processing units",
+      "source_url": "https://pmfme.mofpi.gov.in/",
+      "confidence": "VERIFIED"
+    },
+    {
+      "id": "pmegp_micro",
+      "name": "Prime Minister's Employment Generation Programme (PMEGP)",
+      "ministry": "Ministry of MSME / KVIC",
+      "benefit_type": "margin_money_subsidy",
+      "max_project_cost_manufacturing_inr": 5000000,
+      "max_project_cost_service_inr": 2000000,
+      "subsidy_matrix_pct": {
+        "general_urban": 15,
+        "general_rural": 25,
+        "special_urban": 25,
+        "special_rural": 35
+      },
+      "special_category_includes": ["SC", "ST", "OBC", "women", "minorities", "ex_servicemen", "transgender", "aspirational_districts"],
+      "own_contribution_pct": { "general": 10, "special": 5 },
+      "source_url": "https://www.kviconline.gov.in/pmegpeportal/pmegphome/index.jsp",
+      "confidence": "VERIFIED"
+    },
+    {
+      "id": "mudra_pmmy",
+      "name": "Pradhan Mantri MUDRA Yojana (PMMY)",
+      "ministry": "Department of Financial Services",
+      "benefit_type": "collateral_free_credit_guarantee",
+      "categories": [
+        { "name": "Shishu", "min_inr": 0, "max_inr": 50000 },
+        { "name": "Kishore", "min_inr": 50001, "max_inr": 500000 },
+        { "name": "Tarun", "min_inr": 500001, "max_inr": 1000000 },
+        { "name": "Tarun Plus", "min_inr": 1000001, "max_inr": 2000000, "condition": "Only after successful Tarun repayment" }
+      ],
+      "source_url": "https://www.mudra.org.in/",
+      "confidence": "VERIFIED"
+    },
+    {
+      "id": "standup_india",
+      "name": "Stand-Up India",
+      "ministry": "Department of Financial Services",
+      "benefit_type": "composite_loan_sc_st_women_greenfield",
+      "loan_min_inr": 1000000,
+      "loan_max_inr": 10000000,
+      "eligible": "SC/ST and/or women entrepreneur, greenfield enterprise, 51% shareholding where applicable",
+      "tenure_years": 7,
+      "source_url": "https://www.standupmitra.in/",
+      "confidence": "VERIFIED"
+    },
+    {
+      "id": "aif",
+      "name": "Agriculture Infrastructure Fund (AIF)",
+      "ministry": "Dept of Agriculture & Farmers Welfare",
+      "benefit_type": "interest_subvention",
+      "subvention_pct": 3,
+      "subvention_years": 7,
+      "max_loan_inr": 20000000,
+      "eligible_categories": ["cold_storage", "warehouse", "packhouse", "collection_centre", "primary_processing", "custom_hiring"],
+      "source_url": "https://agriinfra.dac.gov.in/",
+      "confidence": "VERIFIED"
+    },
+    {
+      "id": "acabc",
+      "name": "Agri-Clinics and Agri-Business Centres (ACABC)",
+      "ministry": "Ministry of Agriculture / NABARD subsidy channel",
+      "benefit_type": "credit_linked_backended_subsidy",
+      "applies_to": "Trained agri graduates setting up agri-clinics / input depots / soil-testing services",
+      "subsidy_note": "Back-ended composite subsidy via NABARD; slab varies by notification — confirm current circular with NABARD before quoting a fixed 36/44% in DPR",
+      "source_url": "https://www.nabard.org/",
+      "confidence": "NEEDS_VERIFICATION"
+    },
+    {
+      "id": "dairy_entrepreneurship",
+      "name": "Dairy Entrepreneurship / AHIDF-linked dairy support",
+      "ministry": "Dept of Animal Husbandry & Dairying",
+      "benefit_type": "interest_subvention_or_backended_subsidy",
+      "note": "Dairy subsidy slabs change by state/year. Treat as potentially applicable, verify current state circular.",
+      "source_url": "https://dahd.nic.in/",
+      "confidence": "NEEDS_VERIFICATION"
+    }
+  ]
+}

@@ -12,10 +12,10 @@ import Link from 'next/link';
 
 export default function FinalPage() {
   const [selectedBusiness, setSelectedBusiness] = useState<string>(
-    'Solar Cold Storage & Preservation Unit'
+    'Business (select on Opportunities page)'
   );
-  const [isFullyVerified, setIsFullyVerified] = useState<boolean>(true);
-  const [verifiedCount, setVerifiedCount] = useState<number>(5);
+  const [isFullyVerified, setIsFullyVerified] = useState<boolean>(false);
+  const [verifiedCount, setVerifiedCount] = useState<number>(0);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -69,8 +69,8 @@ export default function FinalPage() {
         <BeginnerHelperBanner
           stepNumber={7}
           simpleTitle="Final Land Certificate"
-          whatToDo="Tick the 5 land check boxes, download your official certificate, and click the supplier contacts or bank report buttons."
-          whyItMatters="You can take this official certificate directly to any nationalized bank branch to apply for your loan and 35% subsidy."
+          whatToDo="Tick only verified ground checks, then take the backend DPR + summary to the bank."
+          whyItMatters="Banks decide on documents + math, not on app badges — this summary keeps you honest."
         />
 
         {/* 1. Business-Specific Ground Verification Checkboxes */}

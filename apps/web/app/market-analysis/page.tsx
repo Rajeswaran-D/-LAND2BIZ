@@ -49,7 +49,7 @@ export default function MarketAnalysisPage() {
               Local Business Ideas For Your Land
             </h1>
             <p className="text-slate-300 text-sm mt-1 max-w-xl">
-              See setup money needed, monthly profit, government subsidies, and simple pros & cons.
+              Cost ranges from backend data, live market signals, and a verification worksheet.
             </p>
           </div>
 
@@ -78,8 +78,8 @@ export default function MarketAnalysisPage() {
         <BeginnerHelperBanner
           stepNumber={3}
           simpleTitle="Local Business Ideas"
-          whatToDo="Look at the 3 top business ideas for your land and see how much monthly income each idea makes."
-          whyItMatters="You can compare setup costs, monthly profits, and government subsidy benefits for each business."
+          whatToDo="Review typical cost ranges and live mapped counts — then verify gaps on ground."
+          whyItMatters="Mapped zeros can miss unmapped shops; M21 checks prevent bad bets."
         />
 
         {/* Section 1: Top Business Opportunities */}

@@ -1,4 +1,10 @@
 {
+  "version": "1.0",
+  "effective_date": "2026-01-01",
+  "verification_status": "VERIFIED",
+  "source_note": "SIH 2026 core calculator. Rates replicate the official SIH brief exactly. Umbrella NBCFDC guidelines (nbcfdc.gov.in FAQ) publish 7% up to Rs 1.25L / 8% above; SIH brief simplifies to 6.5% micro / 8% term for the hackathon baseline. Confirm final sanction with State Channelizing Agency.",
+  "beneficiary_contribution_pct": 10,
+  "loan_pct": 90,
   "schemes": [
     {
       "id": "micro_finance_01",
@@ -6,10 +12,13 @@
       "name": "Micro Finance Scheme",
       "max_project_cost": 140000,
       "interest_rate": 0.065,
+      "interest_rate_percent": 6.5,
       "tenure_years": 3,
       "moratorium_months": 3,
+      "max_loan": 125000,
       "effective_date": "2026-01-01",
       "source": "SIH_2026_GUIDELINES",
+      "source_url": "https://nbcfdc.gov.in/",
       "verification_status": "VERIFIED"
     },
     {
@@ -19,11 +28,18 @@
       "min_project_cost": 140000.01,
       "max_project_cost": 5000000,
       "interest_rate": 0.08,
+      "interest_rate_percent": 8.0,
       "tenure_years": 7,
       "moratorium_months": 6,
+      "max_loan": 4500000,
       "effective_date": "2026-01-01",
       "source": "SIH_2026_GUIDELINES",
+      "source_url": "https://nbcfdc.gov.in/",
       "verification_status": "VERIFIED"
     }
-  ]
+  ],
+  "out_of_range": {
+    "message": "Outside standard scheme range — needs manual review",
+    "action": "Refer to State Channelizing Agency / bank for case-by-case sanction"
+  }
 }

@@ -1,14 +1,4 @@
-export const apiClient = async (endpoint: string, options: RequestInit = {}) => {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-  const response = await fetch("${baseUrl}${endpoint}", {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-  if (!response.ok) {
-    throw new Error('API request failed');
-  }
-  return response.json();
-};
+// Central re-export: the real client lives in lib/apiClient.ts (typed Confidence included).
+// This file previously contained a broken fetch (string literal instead of template) — deleted.
+export { apiClient } from "@/lib/apiClient";
+export type { Confidence } from "@/lib/apiClient";

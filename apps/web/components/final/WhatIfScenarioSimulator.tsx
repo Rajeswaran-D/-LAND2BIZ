@@ -27,12 +27,7 @@ export const WhatIfScenarioSimulator: React.FC = () => {
         setResultData(data);
       }
     } catch (err) {
-      // Fallback
-      setResultData({
-        scenario_cost: scenarioCapital / 0.10,
-        scenario_loan: (scenarioCapital / 0.10) * 0.90,
-        confidence: 'ESTIMATED',
-      });
+      setResultData(null);
     } finally {
       setIsCalculating(false);
     }
@@ -123,6 +118,9 @@ export const WhatIfScenarioSimulator: React.FC = () => {
       </form>
 
       {/* Recalculated Scenario Result Box */}
+      {!resultData && !isCalculating && (
+        <p className="mt-6 text-xs text-gray-500">Run the backend calculation to see SIH-baseline numbers. Nothing is shown until the backend responds.</p>
+      )}
       {resultData && (
         <div className="mt-6 p-4 bg-purple-50/70 border border-purple-200 rounded-xl text-xs space-y-2">
           <div className="flex items-center gap-2 text-purple-900 font-bold">
@@ -138,12 +136,16 @@ export const WhatIfScenarioSimulator: React.FC = () => {
 
             <div>
               <span className="text-[10px] text-purple-700 uppercase block">Total Project Cost:</span>
-              <span className="text-sm font-extrabold">{formatCurrency(resultData.scenario_cost || scenarioCapital * 10)}</span>
+              <span className="text-sm font-extrabold">
+                {resultData.scenario_cost !== undefined ? formatCurrency(resultData.scenario_cost) : '—'}
+              </span>
             </div>
 
             <div>
               <span className="text-[10px] text-purple-700 uppercase block">Bank Loan Needed:</span>
-              <span className="text-sm font-extrabold">{formatCurrency(resultData.scenario_loan || scenarioCapital * 9)}</span>
+              <span className="text-sm font-extrabold">
+                {resultData.scenario_loan !== undefined ? formatCurrency(resultData.scenario_loan) : '—'}
+              </span>
             </div>
           </div>
         </div>

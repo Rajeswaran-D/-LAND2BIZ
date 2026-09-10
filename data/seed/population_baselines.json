@@ -1,0 +1,24 @@
+{
+  "version": "1.0",
+  "confidence": "VERIFIED",
+  "source_note": "Baseline-only population anchors. Census 2011 is NEVER a live demand signal. Growth-adjust with state decadal rate, then cross-check with live proxies (Places busyness, TRAI density, PLFS). Label UI as baseline population (2011 Census, growth-adjusted).",
+  "method": "current_estimate = census_2011 * (1 + state_decadal_growth_pct/100) ^ (years_since_2011/10)",
+  "state_decadal_growth_pct_2001_2011": {
+    "uttar_pradesh": 20.2,
+    "bihar": 25.4,
+    "madhya_pradesh": 20.3,
+    "rajasthan": 21.3,
+    "maharashtra": 16.0,
+    "gujarat": 19.3,
+    "west_bengal": 13.8,
+    "tamil_nadu": 15.6,
+    "karnataka": 15.6,
+    "india_average": 17.7
+  },
+  "sources": [
+    "https://censusindia.gov.in/",
+    "https://www.data.gov.in/",
+    "https://www.trai.gov.in/",
+    "https://mospi.gov.in/periodic-labour-force-survey-plfs"
+  ]
+}

@@ -54,7 +54,7 @@ function PlanContent() {
               Simple Business Plan & Safety Check
             </h1>
             <p className="text-slate-300 text-sm mt-1 max-w-xl">
-              See your project safety score (88/100), key risks with easy fixes, and NABARD business plan.
+              Cost ranges, risks with fixes, and readiness checklist from backend data.
             </p>
           </div>
 
@@ -83,12 +83,12 @@ function PlanContent() {
         <BeginnerHelperBanner
           stepNumber={6}
           simpleTitle="Simple Business Plan"
-          whatToDo="Check your project safety score (88/100) and see simple fixes for potential risks like power cuts or crop off-season."
-          whyItMatters="This business plan is prepared according to national agriculture bank standards, making it easy to get bank loan approval."
+          whatToDo="Review cost ranges, risks, and ground checks before investing."
+          whyItMatters="Banks need backend loan math + verified documents, not fixed profit promises."
         />
 
-        {/* Section 1: Project Success Score (88/100) */}
-        <PlanSuccessScore financeSkipped={financeSkipped} />
+        {/* Section 1: Readiness checklist */}
+        <PlanSuccessScore financeSkipped={financeSkipped} districtName={onboardingData?.fullAddress.district} />
 
         {/* Section 2: Specific Key Dangers & Easy Fixes */}
         <PlanKeyDangers />

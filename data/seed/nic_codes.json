@@ -1,0 +1,13 @@
+{
+  "version": "1.0",
+  "confidence": "VERIFIED",
+  "source_note": "NIC 2008 5-digit activity classes (Ministry of Statistics). Used only to map chosen business to Udyam registration field — never shown as financial advice.",
+  "mappings": [
+    { "business_category": "cold_storage", "nic_codes": ["52101", "52102"], "nic_description": "Warehousing and storage including refrigerated warehousing" },
+    { "business_category": "food_processing", "nic_codes": ["10301", "10304", "10611"], "nic_description": "Fruit/vegetable processing; flour milling" },
+    { "business_category": "agri_retail", "nic_codes": ["47721", "47722"], "nic_description": "Retail sale of fertilisers, seeds, agri inputs / soil-testing services" },
+    { "business_category": "dairy", "nic_codes": ["10501", "10502"], "nic_description": "Milk collection, chilling, processing" },
+    { "business_category": "ev_charging", "nic_codes": ["35106", "47300"], "nic_description": "Electric power distribution / retail fuel and charging activity — confirm NIC with Udyam helpdesk for EV stations" },
+    { "business_category": "flour_spice_mill", "nic_codes": ["10611", "10791"], "nic_description": "Grain milling; spice processing" }
+  ]
+}

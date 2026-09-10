@@ -1,74 +1,63 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { EligibilityProfile } from './SchemeEligibilityQuestionnaire';
-import { Landmark, CheckCircle2, ArrowUpRight, Sparkles } from 'lucide-react';
+import { Landmark, CheckCircle2, ArrowUpRight } from 'lucide-react';
+import { EvidenceBadge } from '@/components/ui/EvidenceBadge';
+import { apiClient } from '@/lib/apiClient';
 
 interface GovernmentSchemesGridProps {
   userProfile?: EligibilityProfile;
+  projectCost?: number;
 }
 
-export const GovernmentSchemesGrid: React.FC<GovernmentSchemesGridProps> = ({ userProfile }) => {
+interface MudraCat { name: string; max_inr: number }
+interface SchemeRow {
+  id: string;
+  name: string;
+  ministry: string;
+  source_url: string;
+  confidence?: string;
+  subsidy_pct?: number;
+  min_beneficiary_share_pct?: number;
+  subsidy_matrix_pct?: Record<string, number>;
+  categories?: MudraCat[];
+  subvention_years?: number;
+  subsidy_note?: string;
+  note?: string;
+}
+
+type SchemeCard = SchemeRow & { metric: string; sub: string; badge: 'VERIFIED' | 'NEEDS_VERIFICATION' };
+
+type SchemesResponse = { version: string; schemes: SchemeRow[] };
+
+export const GovernmentSchemesGrid: React.FC<GovernmentSchemesGridProps> = ({ userProfile, projectCost }) => {
+  const [data, setData] = useState<SchemesResponse | null>(null);
+
+  useEffect(() => {
+    let live = true;
+    apiClient('/api/v1/schemes/list').then((s) => { if (live) setData(s); }).catch(() => {});
+    return () => { live = false; };
+  }, []);
+
+  if (!data) return <p className="text-xs text-gray-500 mb-10">Loading verified scheme data from backend…</p>;
+
   const isWoman = userProfile ? userProfile.gender === 'female' : true;
-  const isSpecialCategory = userProfile ? isWoman || userProfile.category !== 'general' : true;
-  const isWomanOrScSt = userProfile ? isWoman || userProfile.category === 'sc_st' : true;
+  const isSpecial = userProfile ? isWoman || userProfile.category !== 'general' : true;
+  const pmegp = data.schemes.find((s: SchemeRow) => s.id === 'pmegp_micro');
+  const pmegpPct: number | undefined = pmegp?.subsidy_matrix_pct?.[isSpecial ? 'special_rural' : 'general_rural'];
 
-  const pmegpSubsidyRate = isSpecialCategory
-    ? isWoman
-      ? '35% Money Back (Women Special Category)'
-      : '35% Money Back (Special Category)'
-    : '25% Money Back (General Category)';
-
-  const schemes = [
-    {
-      id: 'pmfme',
-      name: 'PMFME Scheme',
-      fullName: 'PM Formalisation of Micro Food Processing Enterprises',
-      subsidyRate: '35% Money Back',
-      maxLimit: 'Up to ₹10 Lakhs Grant',
-      interestBenefit: '3% Interest Subvention (AIF Linked)',
-      eligibilityStatus: 'Highly Eligible',
-      simpleReason: 'Eligible for cold storage, grain mills, bio-fertilizers, and agri-processing units.',
-    },
-    {
-      id: 'pmegp',
-      name: 'PMEGP Scheme',
-      fullName: 'Prime Minister Employment Generation Programme',
-      subsidyRate: pmegpSubsidyRate,
-      maxLimit: 'Up to ₹25 Lakhs Project Cost',
-      interestBenefit: 'Rural Priority Sector Lending',
-      eligibilityStatus: 'Highly Eligible',
-      simpleReason: `Provides ${isSpecialCategory ? '35%' : '25%'} margin money subsidy for new rural ventures.`,
-    },
-    {
-      id: 'aif',
-      name: 'Agri Infrastructure Fund (AIF)',
-      fullName: 'Agriculture Infrastructure Fund Scheme',
-      subsidyRate: '3% Discount on Interest',
-      maxLimit: 'Loans up to ₹2 Crores',
-      interestBenefit: '7 Years Subvention Period',
-      eligibilityStatus: 'Potentially Applicable',
-      simpleReason: 'Reduces bank loan interest rate from 10.5% down to ~7.5% per year.',
-    },
-    {
-      id: 'mudra_standup',
-      name: isWomanOrScSt ? 'Stand-Up India Scheme' : 'MUDRA Bank Loan',
-      fullName: isWomanOrScSt
-        ? isWoman
-          ? 'Stand-Up India Scheme for Women Entrepreneurs'
-          : 'Stand-Up India Scheme for SC/ST'
-        : 'Micro Units Development & Refinance Agency',
-      subsidyRate: 'No Land Mortgage Needed',
-      maxLimit: isWomanOrScSt ? '₹10 Lakhs to ₹1 Crore' : 'Up to ₹10 Lakhs',
-      interestBenefit: 'Lowest Bank Base Rate',
-      eligibilityStatus: isWomanOrScSt ? 'Unlocked Special Match' : 'Potentially Applicable',
-      simpleReason: isWomanOrScSt
-        ? isWoman
-          ? 'Unlocked specially for Women Entrepreneurs to get bank loans up to ₹1 Crore without collateral.'
-          : 'Unlocked for SC/ST entrepreneurs to get bank loans up to ₹1 Crore without collateral.'
-        : 'Provides bank credit guarantee so you don’t need to mortgage extra property.',
-    },
-  ];
+  const cards = data.schemes.map((s: SchemeRow) => {
+    let metric = '', sub = '';
+    let badge: 'VERIFIED' | 'NEEDS_VERIFICATION' = s.confidence === 'VERIFIED' ? 'VERIFIED' : 'NEEDS_VERIFICATION';
+    if (s.id === 'pmfme_individual') { metric = `${s.subsidy_pct}% credit-linked, cap ₹10L`; sub = `Min ${s.min_beneficiary_share_pct}% owner share`; }
+    else if (s.id === 'pmegp_micro') { metric = `${pmegpPct}% margin money (rural ${isSpecial ? 'special' : 'general'})`; sub = `Caps ₹50L mfg / ₹20L service · own share ${isSpecial ? '5%' : '10%'}`; }
+    else if (s.id === 'mudra_pmmy') { metric = s.categories.map((c: MudraCat) => `${c.name} ≤₹${(c.max_inr / 100000).toFixed(c.max_inr >= 100000 ? 0 : 1)}L`).join(' · '); sub = 'Collateral-free via member banks; Tarun Plus only after Tarun repaid'; }
+    else if (s.id === 'standup_india') { metric = '₹10L – ₹1Cr composite loan'; sub = 'SC/ST/women greenfield · 51% holding'; }
+    else if (s.id === 'aif') { metric = `3% subvention to ₹2Cr × ${s.subvention_years}yrs`; sub = 'Post-harvest infra incl. cold chain'; }
+    else { metric = s.subsidy_note || s.note || ''; sub = 'Confirm current circular before quoting'; badge = 'NEEDS_VERIFICATION'; }
+    return { ...s, metric, sub, badge };
+  });
 
   return (
     <div className="space-y-6 mb-10">
@@ -83,15 +72,15 @@ export const GovernmentSchemesGrid: React.FC<GovernmentSchemesGridProps> = ({ us
         </div>
         <span className="text-xs text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full font-bold border border-emerald-200">
           {isWoman
-            ? '👩‍💼 Women 35% Max Subsidy Match'
-            : isSpecialCategory
-            ? '35% Special Category Subsidy'
-            : '25% General Subsidy Match'}
+            ? '👩‍💼 Women rural: 35% PMEGP slab'
+            : isSpecial
+            ? 'Special rural: 35% PMEGP slab'
+            : 'General rural: 25% PMEGP slab'}
         </span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {schemes.map((scheme) => (
+        {cards.map((scheme: any) => (
           <div
             key={scheme.id}
             className="bg-white rounded-2xl border border-gray-200/90 p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
@@ -101,31 +90,17 @@ export const GovernmentSchemesGrid: React.FC<GovernmentSchemesGridProps> = ({ us
                 <span className="text-xs font-extrabold text-blue-900 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100">
                   {scheme.name}
                 </span>
-
-                <span className="text-[11px] font-extrabold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
-                  {scheme.eligibilityStatus}
-                </span>
+                <EvidenceBadge status={scheme.badge} />
               </div>
 
-              <h3 className="font-extrabold text-gray-900 text-base mb-1">{scheme.fullName}</h3>
-              <p className="text-xs text-gray-600 mb-4">{scheme.simpleReason}</p>
+              <h3 className="font-extrabold text-gray-900 text-base mb-1">{scheme.ministry}</h3>
+              <p className="text-xs text-gray-600 mb-4">{scheme.metric} · {scheme.sub}</p>
 
-              {/* Metric Highlights */}
-              <div className="space-y-2 py-3 border-y border-gray-100 text-xs">
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Subsidy Discount:</span>
-                  <span className="font-bold text-emerald-700">{scheme.subsidyRate}</span>
-                </div>
-
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Maximum Money Back:</span>
-                  <span className="font-bold text-gray-900">{scheme.maxLimit}</span>
-                </div>
-
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Interest Subvention:</span>
-                  <span className="font-bold text-blue-700">{scheme.interestBenefit}</span>
-                </div>
+              <div className="py-3 border-y border-gray-100 text-xs">
+                <a href={scheme.source_url} target="_blank" rel="noreferrer" className="text-blue-700 font-bold hover:underline">Verify on official portal ↗</a>
+                {projectCost && scheme.id === 'pmegp_micro' && (
+                  <span className="block mt-1 text-emerald-700 font-bold">On ₹{projectCost.toLocaleString('en-IN')}: ~₹{Math.round(projectCost * pmegpPct / 100).toLocaleString('en-IN')} margin money</span>
+                )}
               </div>
             </div>
 

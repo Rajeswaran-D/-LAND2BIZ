@@ -22,11 +22,11 @@ export const BusinessSpecificGroundCheck: React.FC<BusinessSpecificGroundCheckPr
   onVerificationChange,
 }) => {
   const [checks, setChecks] = useState<GroundCheckState>({
-    roadAccess: true,
-    powerAndSolar: true,
-    waterAndSoil: true,
-    farmerDemand: true,
-    documentsReady: true,
+    roadAccess: false,
+    powerAndSolar: false,
+    waterAndSoil: false,
+    farmerDemand: false,
+    documentsReady: false,
   });
 
   const toggleCheck = (key: keyof GroundCheckState) => {
@@ -51,7 +51,7 @@ export const BusinessSpecificGroundCheck: React.FC<BusinessSpecificGroundCheckPr
             5 Real-World Checks for &quot;{businessTitle}&quot;
           </h2>
           <p className="text-xs text-gray-500 mt-1">
-            Tick these 5 simple land items to confirm your land is 100% ready for this business.
+            Tick only what you personally verified on ground. Unchecked = not claimed.
           </p>
         </div>
 
@@ -97,7 +97,7 @@ export const BusinessSpecificGroundCheck: React.FC<BusinessSpecificGroundCheckPr
               <span>1. Wide Road for Supply Trucks</span>
             </div>
             <p className="text-xs text-gray-600 leading-relaxed">
-              Confirmed 18m wide road access so large crop transport trucks can arrive without narrow village traffic jam.
+              Measured road frontage and truck entry in person — do not rely on map text.
             </p>
           </div>
         </label>
@@ -125,7 +125,7 @@ export const BusinessSpecificGroundCheck: React.FC<BusinessSpecificGroundCheckPr
               <span>2. Power Line & Open Solar Roof Area</span>
             </div>
             <p className="text-xs text-gray-600 leading-relaxed">
-              Confirmed clear sunny roof space (~1,500 sq ft) for 15 kW solar panels and nearby electrical line connection.
+              Confirmed sanctioned power load + backup sizing from vendor quote.
             </p>
           </div>
         </label>
@@ -153,7 +153,7 @@ export const BusinessSpecificGroundCheck: React.FC<BusinessSpecificGroundCheckPr
               <span>3. Good Water Supply & Solid Ground</span>
             </div>
             <p className="text-xs text-gray-600 leading-relaxed">
-              Confirmed borehole water supply and hard ground soil to hold the 15 ton cold storage room setup.
+              Confirmed water source and soil/load-bearing suitability with local engineer.
             </p>
           </div>
         </label>
@@ -181,7 +181,7 @@ export const BusinessSpecificGroundCheck: React.FC<BusinessSpecificGroundCheckPr
               <span>4. Local Farmers Ready to Store Crops</span>
             </div>
             <p className="text-xs text-gray-600 leading-relaxed">
-              Talked to 40+ fruit & vegetable growers in nearby 25 villages who want to store crops safely.
+              Spoke to nearby buyers/farmers and visited competitors — note names, prices, volumes.
             </p>
           </div>
         </label>
@@ -206,10 +206,10 @@ export const BusinessSpecificGroundCheck: React.FC<BusinessSpecificGroundCheckPr
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-sm font-bold text-gray-900">
               <FileCheck className="w-4 h-4 text-indigo-600" />
-              <span>5. Land Papers Ready for 35% Govt Subsidy</span>
+              <span>5. Land Papers + Scheme Circular Checked</span>
             </div>
             <p className="text-xs text-gray-600 leading-relaxed">
-              Aadhaar, PAN, Udyam MSME, and land title papers ready to claim 35% government money subsidy back.
+              Land title, Aadhaar/PAN, Udyam details ready; current scheme circular checked on official portal + bank.
             </p>
           </div>
         </label>

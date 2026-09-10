@@ -20,7 +20,7 @@ export const PlanKeyDangers: React.FC = () => {
           </p>
         </div>
 
-        <EvidenceBadge status="VERIFIED" />
+        <EvidenceBadge status="NEEDS_VERIFICATION" />
       </div>
 
       {/* 3 Specific Key Danger Cards */}
@@ -33,7 +33,7 @@ export const PlanKeyDangers: React.FC = () => {
               <span>1. Electricity Power Cuts</span>
             </div>
             <p className="text-xs text-gray-600 mb-4 leading-relaxed">
-              Summer power cuts from the grid could stop cold cooling chambers.
+              Grid cuts stop cooling — confirm backup in supplier quote.
             </p>
           </div>
 
@@ -41,7 +41,7 @@ export const PlanKeyDangers: React.FC = () => {
             <strong className="text-emerald-800 font-extrabold block mb-0.5 flex items-center gap-1">
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Easy Fix:
             </strong>
-            <span className="text-gray-700">Install 15 kW Solar Panels + Auto Diesel Generator backup.</span>
+            <span className="text-gray-700">Solar + generator sizing from vendor, not assumed 15 kW.</span>
           </div>
         </div>
 

@@ -32,7 +32,7 @@ export const PathSelectionActionBar: React.FC<PathSelectionActionBarProps> = ({
 
         <div className="flex items-center gap-2 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3 py-1.5 rounded-lg text-xs font-bold self-start sm:self-auto">
           <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-          <span>Feasibility Score: {selectedCandidate.suitabilityScore}/100</span>
+          <span>Typical range ₹{(selectedCandidate.capitalMin / 100000).toFixed(1)}–{(selectedCandidate.capitalMax / 100000).toFixed(1)}L</span>
         </div>
       </div>
 
@@ -61,7 +61,7 @@ export const PathSelectionActionBar: React.FC<PathSelectionActionBarProps> = ({
               Path 1: Financial & Scheme Structuring
             </h4>
             <p className="text-xs text-blue-900/80 mb-6 leading-relaxed">
-              Calculate loan EMI, check bank scheme eligibility, claim 35% PMFME govt subsidy, and prepare MSME/Udyam registration.
+              Calculate SIH-baseline loan EMI from backend data, check PMEGP/PMFME/MUDRA slabs, and prepare Udyam details.
             </p>
           </div>
 

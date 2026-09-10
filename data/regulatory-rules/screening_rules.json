@@ -1,0 +1,44 @@
+{
+  "version": "1.0",
+  "confidence": "VERIFIED",
+  "source_note": "Preliminary rule-based screen only. No zoning API exists pan-India for hackathon scope; final clearance always rests with revenue / panchayat / municipal authority. Rule fires -> flag with exact rule id, never an AI paragraph.",
+  "disclaimer": "Preliminary check only — final regulatory clearance rests with the concerned authority.",
+  "rules": [
+    {
+      "id": "R1_agri_to_commercial",
+      "when": "land_type == agricultural AND business_category in [manufacturing, cold_storage, ev_charging, processing]",
+      "flag": "Land conversion (NA) may be required before commercial construction.",
+      "ask_user": "Is the plot NA-converted or earmarked commercial/industrial in the Master Plan?"
+    },
+    {
+      "id": "R2_water_body",
+      "when": "osm_water_layer within 500m OR user answers eco_zone == no",
+      "flag": "Water-body / eco-sensitive proximity — additional clearance likely.",
+      "ask_user": "Is the plot at least 500m from river/water body/protected forest?"
+    },
+    {
+      "id": "R3_road_frontage",
+      "when": "road_frontage_m < 12 AND business needs heavy vehicles",
+      "flag": "Narrow frontage — truck entry and setback NOC may be an issue.",
+      "ask_user": "Does the plot have >=12m direct road frontage?"
+    },
+    {
+      "id": "R4_power_water",
+      "when": "needs 3-phase power OR cold chain AND no sanctioned load",
+      "flag": "Power/water sanction needed before machinery installation.",
+      "ask_user": "Is 3-phase line and reliable water available?"
+    },
+    {
+      "id": "R5_local_noc",
+      "when": "always",
+      "flag": "Gram Panchayat / Municipal NOC required for commercial setup.",
+      "ask_user": "Can local Panchayat/Municipal NOC be obtained?"
+    },
+    {
+      "id": "R6_food_safety",
+      "when": "business_category in [food_processing, dairy, flour_spice_mill]",
+      "flag": "FSSAI registration/license will be required before sale.",
+      "ask_user": "FSSAI Basic/State license applicability confirmed?"
+    }
+  ]
+}

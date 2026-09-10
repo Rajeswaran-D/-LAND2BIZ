@@ -9,13 +9,13 @@ export const ProfessionalSwotGrid: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-200/80 pb-3">
         <div>
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-purple-50 text-purple-700 text-xs font-semibold uppercase tracking-wider mb-1">
-            <Sparkles className="w-3.5 h-3.5" /> 10-Second Guide
+            <Sparkles className="w-3.5 h-3.5" /> How to read this
           </div>
           <h2 className="text-xl font-bold text-gray-900 tracking-tight">
-            Simple Pros & Cons (At a Glance)
+            Decision Worksheet (fill from live data + ground checks)
           </h2>
         </div>
-        <span className="text-xs text-gray-500 font-medium">Ultra-Short Points</span>
+        <span className="text-xs text-gray-500 font-medium">No pre-filled claims — verify each box</span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -30,16 +30,16 @@ export const ProfessionalSwotGrid: React.FC = () => {
             <li className="flex items-start gap-2 p-2 bg-emerald-50/50 rounded-lg">
               <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
               <div>
-                <strong className="text-gray-900 block font-bold">Wide Highway Road:</strong>
-                <span className="text-gray-600">100m from Highway 78 for big trucks.</span>
+                <strong className="text-gray-900 block font-bold">Own land (if applicable):</strong>
+                <span className="text-gray-600">Saves rent — confirm title papers match M0 entry.</span>
               </div>
             </li>
 
             <li className="flex items-start gap-2 p-2 bg-emerald-50/50 rounded-lg">
               <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
               <div>
-                <strong className="text-gray-900 block font-bold">Own Land Ready:</strong>
-                <span className="text-gray-600">Save 60% setup cost (no rent).</span>
+                <strong className="text-gray-900 block font-bold">District ODOP strength:</strong>
+                <span className="text-gray-600">See ODOP card above — build around it.</span>
               </div>
             </li>
           </ul>
@@ -54,16 +54,16 @@ export const ProfessionalSwotGrid: React.FC = () => {
 
           <ul className="space-y-2.5 text-xs">
             <li className="p-2 bg-amber-50/50 rounded-lg space-y-1">
-              <strong className="text-gray-900 block font-bold">Power Line Delay (30 days):</strong>
+              <strong className="text-gray-900 block font-bold">Power sanction delay:</strong>
               <span className="inline-block text-[11px] font-bold text-amber-900 bg-amber-100 px-2 py-0.5 rounded">
-                ⚡ Easy Fix: Use solar panels to start fast
+                ⚡ Fix: confirm DISCOM load + solar backup quote
               </span>
             </li>
 
             <li className="p-2 bg-amber-50/50 rounded-lg space-y-1">
-              <strong className="text-gray-900 block font-bold">Limited Cash Buffer:</strong>
+              <strong className="text-gray-900 block font-bold">Working capital gap:</strong>
               <span className="inline-block text-[11px] font-bold text-amber-900 bg-amber-100 px-2 py-0.5 rounded">
-                🎁 Easy Fix: Get 35% Govt scheme subsidy
+                🎁 Fix: check PMEGP/MUDRA slabs with bank
               </span>
             </li>
           </ul>
@@ -80,16 +80,16 @@ export const ProfessionalSwotGrid: React.FC = () => {
             <li className="flex items-start gap-2 p-2 bg-blue-50/50 rounded-lg">
               <CheckCircle2 className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
               <div>
-                <strong className="text-gray-900 block font-bold">No Cold Storage within 15km:</strong>
-                <span className="text-gray-600">40+ local farmers need storage.</span>
+                <strong className="text-gray-900 block font-bold">Mapped gaps:</strong>
+                <span className="text-gray-600">See live market-gap card — verify zeros on ground.</span>
               </div>
             </li>
 
             <li className="flex items-start gap-2 p-2 bg-blue-50/50 rounded-lg">
               <CheckCircle2 className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
               <div>
-                <strong className="text-gray-900 block font-bold">Govt 35% Money Back:</strong>
-                <span className="text-gray-600">Qualifies for PMFME Govt scheme.</span>
+                <strong className="text-gray-900 block font-bold">Scheme routes:</strong>
+                <span className="text-gray-600">PMFME/PMEGP/AIF only if category + bank confirm.</span>
               </div>
             </li>
           </ul>
@@ -104,9 +104,9 @@ export const ProfessionalSwotGrid: React.FC = () => {
 
           <ul className="space-y-2.5 text-xs">
             <li className="p-2 bg-rose-50/50 rounded-lg space-y-1">
-              <strong className="text-gray-900 block font-bold">Rainfall Harvest Changes:</strong>
+              <strong className="text-gray-900 block font-bold">Seasonality + repayment pressure:</strong>
               <span className="inline-block text-[11px] font-bold text-rose-900 bg-rose-100 px-2 py-0.5 rounded">
-                🛡️ Easy Fix: Store multiple items (veggies, seeds, dairy)
+                🛡️ Fix: multi-product plan + EMI from backend schedule
               </span>
             </li>
           </ul>

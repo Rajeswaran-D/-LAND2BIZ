@@ -1,0 +1,40 @@
+{
+  "version": "1.0",
+  "survey": "Household Consumption Expenditure Survey (HCES) 2022-23",
+  "organization": "National Sample Survey Office (NSSO), Ministry of Statistics and Programme Implementation (MoSPI)",
+  "official_url": "https://mospi.gov.in/",
+  "data_period": "2022-2023",
+  "geographic_scope": "Tamil Nadu State Baseline (Rural & Urban MPCE)",
+  "authority_level": "LEVEL 1",
+  "status": "VERIFIED_STATISTICAL_BASELINE",
+  "limitations": [
+    "Regional/State MPCE average baseline only — MUST NOT be presented as exact village-level spending.",
+    "Serves as a Regional Demand Signal to contextualize purchasing power for micro enterprise feasibility."
+  ],
+  "tamil_nadu_mpce_2022_23": {
+    "rural_mpce_inr": 5310,
+    "urban_mpce_inr": 8310,
+    "state_average_mpce_inr": 6810,
+    "rural_urban_ratio": 1.56
+  },
+  "expenditure_distribution_shares_pct": {
+    "food_and_beverages": 42.5,
+    "processed_food_and_dairy": 14.2,
+    "fuel_and_light": 7.8,
+    "clothing_and_footwear": 6.5,
+    "transport_and_ev_charging": 8.4,
+    "durables_and_equipment": 5.6,
+    "services_and_other_retail": 15.0
+  },
+  "monthly_expenditure_per_household_5person_est_inr": {
+    "rural_household_total_inr": 26550,
+    "rural_household_processed_food_dairy_inr": 3770,
+    "rural_household_transport_fuel_inr": 2230,
+    "rural_household_general_retail_inr": 3980,
+    "urban_household_total_inr": 41550,
+    "urban_household_processed_food_dairy_inr": 5900,
+    "urban_household_transport_fuel_inr": 3490,
+    "urban_household_general_retail_inr": 6230
+  },
+  "demand_signal_formula": "regional_demand_index = (mpce_baseline * sector_share_pct / 100) * (catchment_population_estimate / 5.0) / 100000"
+}

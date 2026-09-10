@@ -1,0 +1,83 @@
+{
+  "version": "1.0",
+  "source_note": "Ranges only — never quote a single fixed number as truth. Calibrated against NABARD unit-cost / model-project references and public cold-chain project reports: small cold rooms (15-50MT) typically Rs 25-80L all-in; agri-input depots Rs 5-15L; EV charging hubs Rs 15-40L depending on charger capacity and civil works. Always display as range + NEEDS_VERIFICATION until user ground-truths quotes locally.",
+  "templates": [
+    {
+      "id": "solar_cold_storage_15mt",
+      "title": "Solar Cold Storage & Preservation Unit (15 MT)",
+      "category": "cold_storage",
+      "capacity": "15 MT modular chamber, 2-8C",
+      "capital_min_inr": 1500000,
+      "capital_max_inr": 2200000,
+      "monthly_gross_inr": 110000,
+      "monthly_cost_inr": 35000,
+      "monthly_net_inr": 75000,
+      "payback_months_typical": 22,
+      "margin_pct_typical": 26,
+      "key_equipment": ["Cold storage chamber", "Solar array ~15kW", "Temperature logger", "Insulated handling"],
+      "utilities": "3-phase line + solar; borewell backup",
+      "confidence": "ESTIMATED",
+      "verify_locally": ["Get 2 local cold-room quotes", "Confirm power sanction load", "Talk to 5 farmers on storage rent willingness"]
+    },
+    {
+      "id": "agri_input_depot",
+      "title": "Agri Seeds, Fertilizer & Soil Testing Shop",
+      "category": "agri_retail",
+      "capital_min_inr": 800000,
+      "capital_max_inr": 1200000,
+      "monthly_gross_inr": 230000,
+      "monthly_cost_inr": 185000,
+      "monthly_net_inr": 45000,
+      "payback_months_typical": 17,
+      "margin_pct_typical": 18,
+      "key_equipment": ["Soil test kit", "Computer/printer", "Storage racks", "Seed inventory"],
+      "utilities": "Single-phase commercial line",
+      "confidence": "ESTIMATED",
+      "verify_locally": ["Check dealer margin sheets", "Confirm seed license requirement", "Survey 10 farmers on travel distance"]
+    },
+    {
+      "id": "ev_charging_hub",
+      "title": "Highway EV Fast-Charging Hub",
+      "category": "ev_charging",
+      "capital_min_inr": 1800000,
+      "capital_max_inr": 2500000,
+      "monthly_gross_inr": 250000,
+      "monthly_cost_inr": 170000,
+      "monthly_net_inr": 80000,
+      "payback_months_typical": 25,
+      "margin_pct_typical": 32,
+      "key_equipment": ["DC fast charger", "AC charger", "Rest-area setup", "Metering"],
+      "utilities": "HT/LT commercial sanction, 11kV proximity",
+      "confidence": "ESTIMATED",
+      "verify_locally": ["Get DISCOM load-sanction estimate", "Count daily e-rickshaw/highway traffic", "Confirm land frontage and parking"]
+    },
+    {
+      "id": "dairy_collection_50lpd",
+      "title": "Dairy Collection & Chilling Point",
+      "category": "dairy",
+      "capital_min_inr": 800000,
+      "capital_max_inr": 2000000,
+      "monthly_net_inr": 40000,
+      "payback_months_typical": 24,
+      "margin_pct_typical": 15,
+      "key_equipment": ["Bulk milk cooler", "Testing kit", "Cans/transport"],
+      "utilities": "3-phase + water",
+      "confidence": "ESTIMATED",
+      "verify_locally": ["Confirm union/co-op procurement rate", "Check morning/evening litre volumes"]
+    },
+    {
+      "id": "flour_spice_mill",
+      "title": "Flour & Spice Mill",
+      "category": "food_processing",
+      "capital_min_inr": 500000,
+      "capital_max_inr": 1500000,
+      "monthly_net_inr": 35000,
+      "payback_months_typical": 20,
+      "margin_pct_typical": 20,
+      "key_equipment": ["Pulveriser", "Roaster", "Packaging sealer"],
+      "utilities": "3-phase line",
+      "confidence": "ESTIMATED",
+      "verify_locally": ["Confirm FSSAI registration need", "Check local kirana offtake"]
+    }
+  ]
+}

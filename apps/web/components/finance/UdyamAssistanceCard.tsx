@@ -21,7 +21,7 @@ export const UdyamAssistanceCard: React.FC = () => {
       </div>
 
       <p className="text-xs sm:text-sm text-gray-600 mb-6 leading-relaxed">
-        Udyam Registration is the official Indian Government MSME certificate needed to get bank loans, 35% scheme subsidies, and electricity discounts.
+        Udyam Registration Assistance only — LAND2BIZ prepares details for the official portal. It never completes registration. Registration itself happens only on udyamregistration.gov.in.
       </p>
 
       {/* 2 Side-by-Side Preparation Lists */}
@@ -36,7 +36,7 @@ export const UdyamAssistanceCard: React.FC = () => {
           <ul className="space-y-2 text-xs text-blue-900">
             <li className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
-              <span><strong>NIC Code Classification:</strong> Category 1030 (Food/Agri Processing).</span>
+              <span><strong>NIC Code Classification:</strong> mapped per business from NIC 2008 data; ambiguous cases marked NEEDS_VERIFICATION.</span>
             </li>
             <li className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>

@@ -6,7 +6,6 @@ import { GlobalJourneyIndicator } from '@/components/ui/GlobalJourneyIndicator';
 import { BeginnerHelperBanner } from '@/components/ui/BeginnerHelperBanner';
 import {
   ComparativeCandidatesDeck,
-  CANDIDATES_DECK,
   CandidateBusiness,
 } from '@/components/opportunities/ComparativeCandidatesDeck';
 import { EmpiricalDecisionEngine } from '@/components/opportunities/EmpiricalDecisionEngine';
@@ -18,8 +17,7 @@ export default function OpportunitiesPage() {
   const router = useRouter();
   const [onboardingData, setOnboardingData] = useState<OnboardingFormData | null>(null);
 
-  // Selected candidate state (defaults to Rank #1 Solar Cold Storage)
-  const [selectedCandidate, setSelectedCandidate] = useState<CandidateBusiness>(CANDIDATES_DECK[0]);
+  const [selectedCandidate, setSelectedCandidate] = useState<CandidateBusiness | null>(null);
 
   // Load onboarding data from sessionStorage on mount
   useEffect(() => {
@@ -57,7 +55,7 @@ export default function OpportunitiesPage() {
               Pick The Best Business For Your Land
             </h1>
             <p className="text-slate-300 text-sm mt-1 max-w-xl">
-              Compare top 3 business ideas side-by-side and pick the most profitable option for your land.
+              Compare cost ranges side-by-side from backend data and pick one to carry forward.
             </p>
           </div>
 
@@ -86,21 +84,22 @@ export default function OpportunitiesPage() {
         <BeginnerHelperBanner
           stepNumber={4}
           simpleTitle="Pick Best Choice"
-          whatToDo="Click on the business card you like best to select it as your chosen project."
-          whyItMatters="Once selected, our system locks your project so we can calculate bank loans and 35% government subsidies for it."
+          whatToDo="Click the card that fits your capital and utilities to carry it forward."
+          whyItMatters="Your pick flows into loan math and ground checks — ranges stay estimates until verified."
         />
 
         {/* Section 1: Comparative Evaluation Candidates Deck */}
         <ComparativeCandidatesDeck
-          selectedId={selectedCandidate.id}
+          selectedId={selectedCandidate?.id || ''}
           onSelect={(cand) => setSelectedCandidate(cand)}
         />
 
-        {/* Section 2: AI Decision Engine with Empirical Data Justification */}
-        <EmpiricalDecisionEngine candidate={selectedCandidate} />
-
-        {/* Section 3: Lock Selection & Path Transition Deck */}
-        <PathSelectionActionBar selectedCandidate={selectedCandidate} />
+        {selectedCandidate && (
+          <>
+            <EmpiricalDecisionEngine candidate={selectedCandidate} />
+            <PathSelectionActionBar selectedCandidate={selectedCandidate} />
+          </>
+        )}
       </main>
     </div>
   );

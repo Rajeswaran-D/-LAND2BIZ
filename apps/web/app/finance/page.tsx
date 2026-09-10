@@ -74,7 +74,7 @@ export default function FinancePage() {
               Bank Loan Calculator & Govt Subsidy
             </h1>
             <p className="text-slate-300 text-sm mt-1 max-w-xl">
-              Calculate bank loan EMI, see 35% government money back schemes, and get free MSME help.
+              SIH-baseline EMI from backend data, verified scheme slabs, and MSME guidance.
             </p>
           </div>
 
@@ -103,8 +103,8 @@ export default function FinancePage() {
         <BeginnerHelperBanner
           stepNumber={5}
           simpleTitle="Money & Subsidy"
-          whatToDo="Use the slider to see bank loan amounts, monthly EMI, and fill in your details to get 35% government money back."
-          whyItMatters="Women entrepreneurs, rural landowners, and SC/ST categories get up to 35% government subsidy money back."
+          whatToDo="Use the slider for SIH-baseline loan math, then match PMEGP/PMFME/MUDRA slabs with your profile."
+          whyItMatters="Slabs differ by rural/urban + category — the backend computes the exact matrix."
         />
 
         {/* Section 1: Live Dynamic Financial Calculator */}

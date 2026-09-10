@@ -1,0 +1,71 @@
+{
+  "version": "1.0",
+  "confidence": "VERIFIED",
+  "source_note": "Static curated checklists (M21). Lookup table only — never AI-generated per request. On-ground + virtual checks per business category.",
+  "checklists": {
+    "cold_storage": {
+      "on_ground": [
+        "Visit the plot at 2-3 different times of day and note actual farmer/truck footfall",
+        "Talk to 5 nearby vegetable growers on whether they would pay for storage and at what rent",
+        "Visit nearest 2 cold storages and note their occupancy, rent and distance",
+        "Verify land ownership papers match M0 entry",
+        "Confirm 3-phase power pole and road width in person"
+      ],
+      "virtual": [
+        "Search cold storage + district on Google/JustDial for listed competitors and ratings",
+        "Check cold-room supplier quotes online for 15MT sizing",
+        "Search PMFME portal for current individual-unit guidelines",
+        "Look up NIC 52101/52102 for Udyam classification",
+        "Search state horticulture announcements for packhouse/cold-chain subsidy updates"
+      ]
+    },
+    "agri_retail": {
+      "on_ground": [
+        "Count daily farmer footfall at nearest 2 input shops",
+        "Ask 10 farmers where they currently buy seeds and how far they travel",
+        "Check shop rental rates on the main road",
+        "Verify seed/fertilizer dealer license requirement with agriculture officer",
+        "Confirm storage space is dry and pest-free"
+      ],
+      "virtual": [
+        "Search agri-input dealers + area for competition",
+        "Check ACABC current circular on NABARD site",
+        "Look up seed company distributorship terms",
+        "Look up NIC 47721/47722 for Udyam",
+        "Check PMEGP portal for current rural subsidy slab"
+      ]
+    },
+    "ev_charging": {
+      "on_ground": [
+        "Count e-rickshaws and EV trucks passing in a full day",
+        "Measure parking/frontage depth for 2-4 vehicles",
+        "Confirm 11kV line distance with lineman",
+        "Check competing fuel stations/chargers within 40km",
+        "Confirm night lighting and security feasibility"
+      ],
+      "virtual": [
+        "Search EV chargers + highway stretch on maps",
+        "Check DISCOM EV tariff circular for the state",
+        "Search state EV policy capital-grant clause",
+        "Look up Udyam NIC mapping with helpdesk",
+        "Search recent tender/news for highway charging corridors"
+      ]
+    },
+    "default": {
+      "on_ground": [
+        "Visit the plot at different times and note footfall",
+        "Talk to 5 nearby shopkeepers/residents on demand",
+        "Visit nearest 2 competitors and observe pricing",
+        "Verify land documents match M0",
+        "Confirm road and transport access in person"
+      ],
+      "virtual": [
+        "Search business category + area online for listings",
+        "Check raw-material/supplier pricing online",
+        "Search matched scheme name on official portal for current rules",
+        "Look up NIC code for Udyam",
+        "Search recent state announcements for the sector"
+      ]
+    }
+  }
+}

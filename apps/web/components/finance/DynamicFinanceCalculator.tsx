@@ -13,15 +13,20 @@ export const DynamicFinanceCalculator: React.FC<DynamicFinanceCalculatorProps> =
   initialCapital,
 }) => {
   const [capital, setCapital] = useState<number>(initialCapital > 0 ? initialCapital : 150000);
-  const [interestRate] = useState<number>(7.5);
-  const [tenureYears] = useState<number>(7);
 
   const [backendData, setBackendData] = useState<{
     project_cost?: number;
     loan_amount?: number;
     emi?: number;
+    scheme?: any;
+    moratorium_months?: number;
+    total_interest?: number;
+    total_payable?: number;
+    out_of_range?: any;
+    confidence?: string;
   } | null>(null);
   const [isLoadingApi, setIsLoadingApi] = useState<boolean>(false);
+  const [apiError, setApiError] = useState<string>('');
 
   useEffect(() => {
     if (initialCapital > 0) {
@@ -34,6 +39,7 @@ export const DynamicFinanceCalculator: React.FC<DynamicFinanceCalculatorProps> =
     const fetchFinance = async () => {
       if (capital <= 0) return;
       setIsLoadingApi(true);
+      setApiError('');
       try {
         const data = await apiClient('/api/v1/finance/project-cost', {
           method: 'POST',
@@ -42,8 +48,8 @@ export const DynamicFinanceCalculator: React.FC<DynamicFinanceCalculatorProps> =
         if (isMounted && data) {
           setBackendData(data);
         }
-      } catch (err) {
-        console.log('Using client-side financial calculation fallback');
+      } catch (err: any) {
+        if (isMounted) { setBackendData(null); setApiError(err?.message || 'Backend unreachable'); }
       } finally {
         if (isMounted) setIsLoadingApi(false);
       }
@@ -56,19 +62,14 @@ export const DynamicFinanceCalculator: React.FC<DynamicFinanceCalculatorProps> =
     };
   }, [capital]);
 
-  const projectCost = backendData?.project_cost || capital / 0.10;
-  const loanAmount = backendData?.loan_amount || projectCost * 0.90;
-  const govtSubsidy = Math.min(projectCost * 0.35, 1000000);
-
-  const monthlyRate = interestRate / 12 / 100;
-  const totalMonths = tenureYears * 12;
-  const computedEmi =
-    monthlyRate > 0
-      ? (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) /
-        (Math.pow(1 + monthlyRate, totalMonths) - 1)
-      : loanAmount / totalMonths;
-
-  const emi = backendData?.emi && backendData.emi > 0 ? backendData.emi : Math.round(computedEmi);
+  const hasBackend = !!backendData && !apiError;
+  const projectCost = backendData?.project_cost ?? 0;
+  const loanAmount = backendData?.loan_amount ?? 0;
+  const emi = backendData?.emi ?? 0;
+  const scheme = backendData?.scheme;
+  const ratePct = scheme?.interest_rate_percent ?? (scheme ? scheme.interest_rate * 100 : 0);
+  const tenure = scheme?.tenure_years ?? 0;
+  const mora = backendData?.moratorium_months ?? scheme?.moratorium_months ?? 0;
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -96,9 +97,20 @@ export const DynamicFinanceCalculator: React.FC<DynamicFinanceCalculatorProps> =
 
         <div className="flex items-center gap-2">
           {isLoadingApi && <RefreshCw className="w-4 h-4 text-blue-600 animate-spin" />}
-          <EvidenceBadge status="VERIFIED" />
+          <EvidenceBadge status={hasBackend ? 'VERIFIED' : 'DATA_UNAVAILABLE'} />
         </div>
       </div>
+
+      {apiError && (
+        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-xs font-semibold">
+          Backend unreachable ({apiError}). No invented EMI is shown — start the FastAPI server to compute from data/schemes/core_loan_rules.json.
+        </div>
+      )}
+      {backendData?.out_of_range && (
+        <div className="mb-6 p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-900 text-xs font-semibold">
+          {backendData.out_of_range.message} — {backendData.out_of_range.action}
+        </div>
+      )}
 
       {/* Interactive Capital Slider */}
       <div className="p-6 bg-gradient-to-r from-blue-50/80 to-indigo-50/80 rounded-2xl border border-blue-100 mb-8 space-y-4">
@@ -166,14 +178,18 @@ export const DynamicFinanceCalculator: React.FC<DynamicFinanceCalculatorProps> =
           <span className="text-[10px] text-emerald-800 font-bold uppercase tracking-wider block">
             🗓️ Monthly Loan EMI
           </span>
-          <div className="text-xl font-black text-emerald-900">{formatCurrency(emi)} / mo</div>
+          <div className="text-xl font-black text-emerald-900">{hasBackend ? `${formatCurrency(emi)} / mo` : '—'}</div>
           <span className="text-[10px] text-emerald-800 block">
-            {interestRate}% rate over {tenureYears} years
+            {scheme ? `${scheme.name} · ${ratePct}% · ${tenure}y · ${mora}m moratorium` : 'Routed from backend scheme data'}
           </span>
         </div>
       </div>
 
-      {/* Govt Subsidy Banner */}
+      {hasBackend && backendData?.total_interest !== undefined && (
+        <p className="text-[11px] text-gray-500 mb-6">Total interest {formatCurrency(backendData.total_interest)} · Total payable {formatCurrency(backendData.total_payable || 0)} · Interest accrues during moratorium, EMI on accrued balance.</p>
+      )}
+
+      {/* Scheme-subsidy note: matched amounts come from /api/v1/schemes/match, never hardcoded here */}
       <div className="p-5 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200/90 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="p-2.5 bg-emerald-600 text-white rounded-xl">
@@ -181,16 +197,16 @@ export const DynamicFinanceCalculator: React.FC<DynamicFinanceCalculatorProps> =
           </div>
           <div>
             <span className="text-xs font-bold text-emerald-900 uppercase block">
-              Govt Subsidy Discount (PMFME Scheme)
+              Subsidy eligibility
             </span>
             <span className="text-base font-extrabold text-emerald-950">
-              Estimated Subsidy Money Back: {formatCurrency(govtSubsidy)}
+              Matched after scheme check — see scheme cards below
             </span>
           </div>
         </div>
 
         <span className="text-xs font-bold text-emerald-800 bg-white px-3.5 py-1.5 rounded-xl border border-emerald-200 shadow-sm self-start sm:self-auto">
-          35% Credit Subsidy
+          Verified slabs · bank-adjusted
         </span>
       </div>
     </div>

@@ -86,16 +86,16 @@ export default function SitePage() {
         />
 
         {/* Section 1: Map View & Location */}
-        <SiteMapPreview onboardingData={onboardingData} suitabilityScore={84} />
+        <SiteMapPreview onboardingData={onboardingData} />
 
         {/* Section 2: Site Metrics */}
-        <SiteMetricsGrid />
+        <SiteMetricsGrid onboardingData={onboardingData} />
 
         {/* Section 3: Nearby 15 Shops Directory */}
-        <NearbyCompetitorsList />
+        <NearbyCompetitorsList onboardingData={onboardingData} />
 
         {/* Section 4: Market Gaps */}
-        <MarketGapSection />
+        <MarketGapSection onboardingData={onboardingData} />
 
         {/* Section 5: Regulatory Questions Modal/Accordion */}
         <RegulatoryQuestionsModal />
