@@ -247,7 +247,7 @@ All transformations are explicit and deterministic:
 
 ## 27. REMAINING GAPS
 
-1. **Google Places GCP Console Enablement:** Places API (New) requires activation in GCP Console for key `AIzaSyD6xyDcslW6LZ9NuZMHuGF9Cp_zo-Ybtu4`.
+1. **Google Places GCP Console Enablement:** Places API (New) requires activation in GCP Console for key `<YOUR_GOOGLE_PLACES_API_KEY>`.
 2. **Subdistrict / Village Census Records:** Census baseline currently operates at district level. Fine-grained rural resolution relies on district density.
 
 ---
