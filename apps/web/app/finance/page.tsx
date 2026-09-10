@@ -18,6 +18,7 @@ export default function FinancePage() {
   const router = useRouter();
   const [onboardingData, setOnboardingData] = useState<OnboardingFormData | null>(null);
   const [userCapital, setUserCapital] = useState<number>(150000);
+  const [selectedCandidate, setSelectedCandidate] = useState<any>(null);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
   const [eligibilityProfile, setEligibilityProfile] = useState<EligibilityProfile>({
@@ -29,19 +30,46 @@ export default function FinancePage() {
     isFirstTime: 'yes',
   });
 
-  // Load onboarding data from sessionStorage on mount
+  // Load onboarding data and selected business candidate from sessionStorage on mount
   useEffect(() => {
     try {
-      const saved = sessionStorage.getItem('land2biz_onboarding_data');
-      if (saved) {
-        const parsed: OnboardingFormData = JSON.parse(saved);
+      const savedOnboarding = sessionStorage.getItem('land2biz_onboarding_data');
+      if (savedOnboarding) {
+        const parsed: OnboardingFormData = JSON.parse(savedOnboarding);
         setOnboardingData(parsed);
         if (parsed.capital && typeof parsed.capital === 'number' && parsed.capital > 0) {
           setUserCapital(parsed.capital);
         }
       }
+
+      const savedCandidate = sessionStorage.getItem('land2biz_selected_candidate');
+      if (savedCandidate) {
+        const parsedCand = JSON.parse(savedCandidate);
+        setSelectedCandidate(parsedCand);
+        const minCap = parsedCand.capitalMin || parsedCand.capital_min_inr || 1500000;
+        const maxCap = parsedCand.capitalMax || parsedCand.capital_max_inr || 2500000;
+        const avgCost = (minCap + maxCap) / 2;
+        const requiredMargin = Math.round(avgCost * 0.10);
+        
+        // Sync capital to selected business if onboarding capital is not explicitly set
+        if (!savedOnboarding || !JSON.parse(savedOnboarding).capital) {
+          setUserCapital(requiredMargin);
+        }
+      } else {
+        const savedDecision = sessionStorage.getItem('land2biz_decision_analysis');
+        if (savedDecision) {
+          const parsedDecision = JSON.parse(savedDecision);
+          const top = parsedDecision?.ranking?.[0];
+          if (top) {
+            setSelectedCandidate(top);
+            const minCap = top.capital_min_inr || 1500000;
+            const maxCap = top.capital_max_inr || 2500000;
+            setUserCapital(Math.round(((minCap + maxCap) / 2) * 0.10));
+          }
+        }
+      }
     } catch (err) {
-      console.error('Failed to load onboarding data:', err);
+      console.error('Failed to load onboarding & selected candidate on finance page:', err);
     }
   }, []);
 
@@ -108,7 +136,7 @@ export default function FinancePage() {
         />
 
         {/* Section 1: Live Dynamic Financial Calculator */}
-        <DynamicFinanceCalculator initialCapital={userCapital} />
+        <DynamicFinanceCalculator initialCapital={userCapital} selectedCandidate={selectedCandidate} />
 
         {/* Section 2: Demographic & Income Scheme Eligibility Questionnaire */}
         <SchemeEligibilityQuestionnaire

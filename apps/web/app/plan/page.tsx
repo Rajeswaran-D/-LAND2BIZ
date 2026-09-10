@@ -9,6 +9,7 @@ import { PlanKeyDangers } from '@/components/plan/PlanKeyDangers';
 import { NabardBusinessPlanCard } from '@/components/plan/NabardBusinessPlanCard';
 import { PostDecisionSupportDeck } from '@/components/plan/PostDecisionSupportDeck';
 import { OnboardingFormData } from '@/types/onboarding';
+import { CandidateBusiness } from '@/components/opportunities/ComparativeCandidatesDeck';
 import { ArrowRight, MapPin, IndianRupee, Sparkles } from 'lucide-react';
 
 function PlanContent() {
@@ -17,13 +18,20 @@ function PlanContent() {
   const financeSkipped = searchParams?.get('finance') === 'skipped';
 
   const [onboardingData, setOnboardingData] = useState<OnboardingFormData | null>(null);
+  const [selectedCandidate, setSelectedCandidate] = useState<CandidateBusiness | null>(null);
 
-  // Load onboarding data from sessionStorage on mount
+  // Load onboarding data and selected candidate from sessionStorage on mount
   useEffect(() => {
     try {
       const saved = sessionStorage.getItem('land2biz_onboarding_data');
       if (saved) {
         setOnboardingData(JSON.parse(saved));
+      }
+
+      // Read the user's selected business candidate
+      const savedCandidate = sessionStorage.getItem('land2biz_selected_candidate');
+      if (savedCandidate) {
+        setSelectedCandidate(JSON.parse(savedCandidate));
       }
     } catch (err) {
       console.error('Failed to load onboarding data:', err);
@@ -88,13 +96,13 @@ function PlanContent() {
         />
 
         {/* Section 1: Readiness checklist */}
-        <PlanSuccessScore financeSkipped={financeSkipped} districtName={onboardingData?.fullAddress.district} />
+        <PlanSuccessScore financeSkipped={financeSkipped} districtName={onboardingData?.fullAddress.district} selectedCandidate={selectedCandidate} />
 
         {/* Section 2: Specific Key Dangers & Easy Fixes */}
-        <PlanKeyDangers />
+        <PlanKeyDangers selectedCandidate={selectedCandidate} />
 
         {/* Section 3: NABARD Model Brief Business Plan */}
-        <NabardBusinessPlanCard financeSkipped={financeSkipped} />
+        <NabardBusinessPlanCard financeSkipped={financeSkipped} selectedCandidate={selectedCandidate} />
 
         {/* Section 4: Post-Decision Action Options */}
         <PostDecisionSupportDeck />

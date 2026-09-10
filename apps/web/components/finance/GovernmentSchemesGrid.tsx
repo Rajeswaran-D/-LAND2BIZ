@@ -52,7 +52,7 @@ export const GovernmentSchemesGrid: React.FC<GovernmentSchemesGridProps> = ({ us
     let badge: 'VERIFIED' | 'NEEDS_VERIFICATION' = s.confidence === 'VERIFIED' ? 'VERIFIED' : 'NEEDS_VERIFICATION';
     if (s.id === 'pmfme_individual') { metric = `${s.subsidy_pct}% credit-linked, cap ₹10L`; sub = `Min ${s.min_beneficiary_share_pct}% owner share`; }
     else if (s.id === 'pmegp_micro') { metric = `${pmegpPct}% margin money (rural ${isSpecial ? 'special' : 'general'})`; sub = `Caps ₹50L mfg / ₹20L service · own share ${isSpecial ? '5%' : '10%'}`; }
-    else if (s.id === 'mudra_pmmy') { metric = s.categories.map((c: MudraCat) => `${c.name} ≤₹${(c.max_inr / 100000).toFixed(c.max_inr >= 100000 ? 0 : 1)}L`).join(' · '); sub = 'Collateral-free via member banks; Tarun Plus only after Tarun repaid'; }
+    else if (s.id === 'mudra_pmmy') { metric = (s.categories || []).map((c: MudraCat) => `${c.name} ≤₹${(c.max_inr / 100000).toFixed(c.max_inr >= 100000 ? 0 : 1)}L`).join(' · '); sub = 'Collateral-free via member banks; Tarun Plus only after Tarun repaid'; }
     else if (s.id === 'standup_india') { metric = '₹10L – ₹1Cr composite loan'; sub = 'SC/ST/women greenfield · 51% holding'; }
     else if (s.id === 'aif') { metric = `3% subvention to ₹2Cr × ${s.subvention_years}yrs`; sub = 'Post-harvest infra incl. cold chain'; }
     else { metric = s.subsidy_note || s.note || ''; sub = 'Confirm current circular before quoting'; badge = 'NEEDS_VERIFICATION'; }
@@ -98,7 +98,7 @@ export const GovernmentSchemesGrid: React.FC<GovernmentSchemesGridProps> = ({ us
 
               <div className="py-3 border-y border-gray-100 text-xs">
                 <a href={scheme.source_url} target="_blank" rel="noreferrer" className="text-blue-700 font-bold hover:underline">Verify on official portal ↗</a>
-                {projectCost && scheme.id === 'pmegp_micro' && (
+                {projectCost && scheme.id === 'pmegp_micro' && pmegpPct !== undefined && (
                   <span className="block mt-1 text-emerald-700 font-bold">On ₹{projectCost.toLocaleString('en-IN')}: ~₹{Math.round(projectCost * pmegpPct / 100).toLocaleString('en-IN')} margin money</span>
                 )}
               </div>

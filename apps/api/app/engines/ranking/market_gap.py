@@ -99,5 +99,7 @@ def gap(category: str, observed_mapped: int | None, catchment_population_estimat
         "people_per_unit_benchmark": bm["people_per_unit"],
         "expected_units": round(expected, 2),
         "observed_mapped": observed_mapped,
+        "mapped_only_note": "mapped=0 does NOT mean none exist on ground; mapped>0 does NOT mean total=count",
+        "reason": f"Mapped count of {observed_mapped} does not guarantee ground total; estimated gap based on {bm['people_per_unit']} people/unit benchmark.",
         "confidence": 45,
     }

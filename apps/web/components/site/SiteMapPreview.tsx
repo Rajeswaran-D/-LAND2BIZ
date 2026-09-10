@@ -5,6 +5,8 @@ import { EvidenceBadge } from '@/components/ui/EvidenceBadge';
 import { MapPin, Navigation, ExternalLink, ShieldCheck } from 'lucide-react';
 import { OnboardingFormData } from '@/types/onboarding';
 
+import { getCoordinates, getDistrictName } from '@/lib/locationUtils';
+
 interface SiteMapPreviewProps {
   onboardingData: OnboardingFormData | null;
   suitabilityScore?: number;
@@ -14,7 +16,7 @@ export const SiteMapPreview: React.FC<SiteMapPreviewProps> = ({
   onboardingData,
   suitabilityScore,
 }) => {
-  let locationDisplayText = 'Enter district or share GPS to preview location';
+  let locationDisplayText = 'Preview Location';
   let lat: number | null = null;
   let lng: number | null = null;
 
@@ -23,7 +25,7 @@ export const SiteMapPreview: React.FC<SiteMapPreviewProps> = ({
       const addr = onboardingData.fullAddress;
       const parts = [addr.doorOrPlotNo, addr.streetOrVillage, addr.blockOrTehsil, addr.district, addr.state]
         .filter(Boolean);
-      locationDisplayText = parts.join(', ') || 'Custom Address';
+      locationDisplayText = parts.join(', ') || `District: ${getDistrictName(onboardingData)}`;
     } else if (onboardingData.locationMode === 'geolocation' && onboardingData.geolocation.latitude) {
       lat = onboardingData.geolocation.latitude;
       lng = onboardingData.geolocation.longitude;
@@ -37,8 +39,17 @@ export const SiteMapPreview: React.FC<SiteMapPreviewProps> = ({
     }
   }
 
-  const bboxDelta = 0.02;
+  if (lat === null || lng === null) {
+    const coords = getCoordinates(onboardingData);
+    lat = coords.lat;
+    lng = coords.lng;
+    if (!onboardingData) {
+      locationDisplayText = `District: ${getDistrictName(onboardingData)} Baseline`;
+    }
+  }
+
   const hasCoords = lat !== null && lng !== null;
+  const bboxDelta = 0.02;
   const mapIframeUrl = hasCoords
     ? `https://www.openstreetmap.org/export/embed.html?bbox=${(lng as number) - bboxDelta}%2C${(lat as number) - bboxDelta}%2C${(lng as number) + bboxDelta}%2C${(lat as number) + bboxDelta}&layer=mapnik&marker=${lat}%2C${lng}`
     : '';

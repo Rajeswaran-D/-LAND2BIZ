@@ -91,12 +91,17 @@ export default function OpportunitiesPage() {
         {/* Section 1: Comparative Evaluation Candidates Deck */}
         <ComparativeCandidatesDeck
           selectedId={selectedCandidate?.id || ''}
-          onSelect={(cand) => setSelectedCandidate(cand)}
+          onSelect={(cand) => {
+            setSelectedCandidate(cand);
+            try {
+              sessionStorage.setItem('land2biz_selected_candidate', JSON.stringify(cand));
+            } catch (e) {}
+          }}
         />
 
         {selectedCandidate && (
           <>
-            <EmpiricalDecisionEngine candidate={selectedCandidate} />
+            <EmpiricalDecisionEngine key={selectedCandidate.id} candidate={selectedCandidate} />
             <PathSelectionActionBar selectedCandidate={selectedCandidate} />
           </>
         )}

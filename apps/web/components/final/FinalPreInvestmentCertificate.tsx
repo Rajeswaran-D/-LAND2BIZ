@@ -85,11 +85,72 @@ export const FinalPreInvestmentCertificate: React.FC<Props> = ({
       <div className="flex flex-col sm:flex-row items-center gap-4">
         <button
           type="button"
-          onClick={() => alert(`Readiness summary for "${businessTitle}" — take backend DPR + this checklist to the bank. Not a government certificate.`)}
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-emerald-500 text-slate-950 font-extrabold text-xs px-6 py-3.5 rounded-xl hover:bg-emerald-400 active:scale-[0.99] transition-all shadow-lg shadow-emerald-500/25"
+          onClick={async () => {
+            try {
+              let onboardingData: any = null;
+              let decisionData: any = null;
+              try {
+                const savedOnboarding = sessionStorage.getItem('land2biz_onboarding_data');
+                if (savedOnboarding) onboardingData = JSON.parse(savedOnboarding);
+                const savedDecision = sessionStorage.getItem('land2biz_decision_analysis');
+                if (savedDecision) decisionData = JSON.parse(savedDecision);
+              } catch (e) {}
+
+              const top = decisionData?.ranking?.[0];
+              const district = onboardingData?.fullAddress?.district || decisionData?.evidence?.district_baseline?.district || 'Coimbatore';
+              const capital = onboardingData?.capital || 150000;
+              const cost = decisionData?.evidence?.finance?.project_cost || capital * 10;
+              const loan = decisionData?.evidence?.finance?.loan_amount || cost * 0.9;
+              const emi = decisionData?.evidence?.finance?.emi?.emi || 22867;
+              const scheme = decisionData?.evidence?.finance?.scheme;
+
+              const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+              const resp = await fetch(`${baseUrl}/api/v1/dpr/generate`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  opportunity_id: top?.id || 'OPP-2026-001',
+                  opportunity_name: businessTitle || top?.title || top?.business || 'Solar Powered Cold Storage (15MT)',
+                  business_category: top?.category || 'cold_storage',
+                  district: district,
+                  land_type: onboardingData?.landType || 'agricultural',
+                  capital: capital,
+                  project_cost: cost,
+                  loan_amount: loan,
+                  interest_rate: scheme?.interest_rate || 8.5,
+                  tenure_years: scheme?.tenure_years || 7,
+                  moratorium_months: scheme?.moratorium_months || 6,
+                  monthly_emi: emi,
+                  payback_years: top?.payback_months_typical ? top.payback_months_typical / 12 : 3.5,
+                  repayment_burden_ratio: 0.35,
+                  odop_product: typeof decisionData?.evidence?.district_baseline?.odop_primary === 'object'
+                    ? decisionData.evidence.district_baseline.odop_primary.value
+                    : decisionData?.evidence?.district_baseline?.odop_primary || 'Local Cluster Product'
+                })
+              });
+
+              if (resp.ok) {
+                const blob = await resp.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `LAND2BIZ_Readiness_Summary_${district}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+              } else {
+                alert('Unable to generate Readiness Summary PDF from backend server.');
+              }
+            } catch (err) {
+              console.error('PDF download error:', err);
+              alert('Backend service unavailable for PDF download.');
+            }
+          }}
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-emerald-500 text-slate-950 font-extrabold text-xs px-6 py-3.5 rounded-xl hover:bg-emerald-400 active:scale-[0.99] transition-all shadow-lg shadow-emerald-500/25 cursor-pointer"
         >
           <Download className="w-4 h-4" />
-          <span>Download Readiness Summary</span>
+          <span>Download Readiness Summary (PDF)</span>
         </button>
 
         <a

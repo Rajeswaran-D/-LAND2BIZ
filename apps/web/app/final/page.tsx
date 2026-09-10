@@ -19,15 +19,30 @@ export default function FinalPage() {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const storedData = sessionStorage.getItem('land2biz_onboarding_data');
-      if (storedData) {
+      // Read the user's selected business candidate from sessionStorage
+      const savedCandidate = sessionStorage.getItem('land2biz_selected_candidate');
+      if (savedCandidate) {
         try {
-          const parsed = JSON.parse(storedData);
-          if (parsed.selectedBusinessTitle) {
-            setSelectedBusiness(parsed.selectedBusinessTitle);
+          const parsed = JSON.parse(savedCandidate);
+          if (parsed.title) {
+            setSelectedBusiness(parsed.title);
           }
         } catch (e) {
-          console.error('Failed to parse onboarding data', e);
+          console.error('Failed to parse selected candidate', e);
+        }
+      }
+
+      // Fallback: try decision analysis ranking[0]
+      if (!savedCandidate) {
+        const savedDecision = sessionStorage.getItem('land2biz_decision_analysis');
+        if (savedDecision) {
+          try {
+            const parsed = JSON.parse(savedDecision);
+            const top = parsed?.ranking?.[0];
+            if (top?.title || top?.business) {
+              setSelectedBusiness(top.title || top.business);
+            }
+          } catch (e) {}
         }
       }
     }

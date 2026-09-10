@@ -295,8 +295,69 @@ export const PostDecisionInteractiveDeck: React.FC<PostDecisionInteractiveDeckPr
             <div className="flex flex-col sm:flex-row items-center gap-3 pt-4 border-t border-gray-100">
               <button
                 type="button"
-                onClick={() => alert(`Official Bank DPR Package for "${businessTitle}" downloaded!`)}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs px-6 py-3 rounded-xl transition-all shadow-md"
+                onClick={async () => {
+                  try {
+                    let onboardingData: any = null;
+                    let decisionData: any = null;
+                    try {
+                      const savedOnboarding = sessionStorage.getItem('land2biz_onboarding_data');
+                      if (savedOnboarding) onboardingData = JSON.parse(savedOnboarding);
+                      const savedDecision = sessionStorage.getItem('land2biz_decision_analysis');
+                      if (savedDecision) decisionData = JSON.parse(savedDecision);
+                    } catch (e) {}
+
+                    const top = decisionData?.ranking?.[0];
+                    const district = onboardingData?.fullAddress?.district || decisionData?.evidence?.district_baseline?.district || 'Coimbatore';
+                    const capital = onboardingData?.capital || 150000;
+                    const cost = decisionData?.evidence?.finance?.project_cost || capital * 10;
+                    const loan = decisionData?.evidence?.finance?.loan_amount || cost * 0.9;
+                    const emi = decisionData?.evidence?.finance?.emi?.emi || 22867;
+                    const scheme = decisionData?.evidence?.finance?.scheme;
+
+                    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+                    const resp = await fetch(`${baseUrl}/api/v1/dpr/generate`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        opportunity_id: top?.id || 'OPP-2026-001',
+                        opportunity_name: top?.title || top?.business || businessTitle || 'Solar Powered Cold Storage (15MT)',
+                        business_category: top?.category || 'cold_storage',
+                        district: district,
+                        land_type: onboardingData?.landType || 'agricultural',
+                        capital: capital,
+                        project_cost: cost,
+                        loan_amount: loan,
+                        interest_rate: scheme?.interest_rate || 8.5,
+                        tenure_years: scheme?.tenure_years || 7,
+                        moratorium_months: scheme?.moratorium_months || 6,
+                        monthly_emi: emi,
+                        payback_years: top?.payback_months_typical ? top.payback_months_typical / 12 : 3.5,
+                        repayment_burden_ratio: 0.35,
+                        odop_product: typeof decisionData?.evidence?.district_baseline?.odop_primary === 'object'
+                          ? decisionData.evidence.district_baseline.odop_primary.value
+                          : decisionData?.evidence?.district_baseline?.odop_primary || 'Local Cluster Product'
+                      })
+                    });
+
+                    if (resp.ok) {
+                      const blob = await resp.blob();
+                      const url = window.URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = `LAND2BIZ_Bankable_DPR_${district}.pdf`;
+                      document.body.appendChild(a);
+                      a.click();
+                      a.remove();
+                      window.URL.revokeObjectURL(url);
+                    } else {
+                      alert('Unable to generate DPR PDF from backend server.');
+                    }
+                  } catch (err) {
+                    console.error('DPR download error:', err);
+                    alert('Backend service unavailable for DPR PDF download.');
+                  }
+                }}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs px-6 py-3 rounded-xl transition-all shadow-md active:scale-95"
               >
                 <Download className="w-4 h-4" />
                 <span>Download Bank Report (PDF)</span>

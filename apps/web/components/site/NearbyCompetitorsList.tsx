@@ -10,14 +10,7 @@ interface Props {
   onboardingData: OnboardingFormData | null;
 }
 
-const getCoords = (d: OnboardingFormData | null) => {
-  if (!d) return null;
-  if (d.locationMode === 'geolocation' && d.geolocation.latitude && d.geolocation.longitude)
-    return { lat: d.geolocation.latitude, lng: d.geolocation.longitude };
-  if (d.locationMode === 'link' && d.locationLink.extractedCoordinates)
-    return { lat: d.locationLink.extractedCoordinates.lat, lng: d.locationLink.extractedCoordinates.lng };
-  return null;
-};
+import { getCoordinates } from '@/lib/locationUtils';
 
 export const NearbyCompetitorsList: React.FC<Props> = ({ onboardingData }) => {
   const [market, setMarket] = useState<any>(null);
@@ -25,8 +18,7 @@ export const NearbyCompetitorsList: React.FC<Props> = ({ onboardingData }) => {
 
   useEffect(() => {
     let live = true;
-    const c = getCoords(onboardingData);
-    if (!c) { setMarket(null); return; }
+    const c = getCoordinates(onboardingData);
     setLoading(true);
     apiClient('/api/v1/intelligence/market', { method: 'POST', body: JSON.stringify({ lat: c.lat, lon: c.lng }) })
       .then((m) => { if (live) setMarket(m); })

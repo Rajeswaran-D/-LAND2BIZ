@@ -17,7 +17,7 @@ interface DistrictProfile {
 }
 interface SiteBucket { mapped_count?: number; records?: unknown[]; status?: string; meaning?: string }
 interface SiteResult {
-  status?: string; confidence?: string;
+  status?: string; confidence?: string; notice?: string | null;
   site_score?: { value: number | null; formula?: string; status?: string };
   amenity_score?: { value: number | null; status?: string };
   road_score?: { value: number | null; status?: string };
@@ -26,14 +26,7 @@ interface SiteResult {
 }
 interface Props { onboardingData: OnboardingFormData | null; }
 
-const getCoords = (d: OnboardingFormData | null): { lat: number; lng: number } | null => {
-  if (!d) return null;
-  if (d.locationMode === 'geolocation' && d.geolocation.latitude && d.geolocation.longitude)
-    return { lat: d.geolocation.latitude, lng: d.geolocation.longitude };
-  if (d.locationMode === 'link' && d.locationLink.extractedCoordinates)
-    return { lat: d.locationLink.extractedCoordinates.lat, lng: d.locationLink.extractedCoordinates.lng };
-  return null;
-};
+import { getCoordinates, getDistrictName } from '@/lib/locationUtils';
 
 export const SiteMetricsGrid: React.FC<Props> = ({ onboardingData }) => {
   const [district, setDistrict] = useState<DistrictProfile | null>(null);
@@ -43,29 +36,28 @@ export const SiteMetricsGrid: React.FC<Props> = ({ onboardingData }) => {
   useEffect(() => {
     let live = true;
     const run = async () => {
-      if (onboardingData?.locationMode === 'address' && onboardingData.fullAddress.district) {
-        try {
-          const p = await apiClient(`/api/v1/intelligence/district?name=${encodeURIComponent(onboardingData.fullAddress.district)}`);
-          if (live) setDistrict(p);
-        } catch { if (live) setDistrict(null); }
-      }
-      const c = getCoords(onboardingData);
-      if (c) {
-        setLoading(true);
-        try {
-          const s = await apiClient('/api/v1/intelligence/site', { method: 'POST', body: JSON.stringify({ lat: c.lat, lon: c.lng }) });
-          if (live) { setSite(s.site); if (s.district_baseline?.matched) setDistrict(s.district_baseline); }
-        } catch { if (live) setSite(null); }
-        finally { if (live) setLoading(false); }
-      }
+      const distName = getDistrictName(onboardingData);
+      try {
+        const p = await apiClient(`/api/v1/intelligence/district?name=${encodeURIComponent(distName)}`);
+        if (live) setDistrict(p);
+      } catch { if (live) setDistrict(null); }
+
+      const c = getCoordinates(onboardingData);
+      setLoading(true);
+      try {
+        const s = await apiClient('/api/v1/intelligence/site', { method: 'POST', body: JSON.stringify({ lat: c.lat, lon: c.lng }) });
+        if (live) { setSite(s.site); if (s.district_baseline?.matched) setDistrict(s.district_baseline); }
+      } catch { if (live) setSite(null); }
+      finally { if (live) setLoading(false); }
     };
     run();
     return () => { live = false; };
   }, [onboardingData]);
 
-  const popBadge: Badge = district?.population_2011?.status === 'VERIFIED' ? 'VERIFIED' : 'DATA_UNAVAILABLE';
+  const popStatus = district?.population_2011?.status;
+  const popBadge: Badge = (popStatus === 'VERIFIED' || popStatus === 'VERIFIED_BASELINE') ? 'VERIFIED' : 'DATA_UNAVAILABLE';
   const estBadge: Badge = district?.population_estimate_2026?.status === 'ESTIMATED' ? 'ESTIMATED' : 'DATA_UNAVAILABLE';
-  const siteBadge: Badge = (site?.site_score?.status as Badge) || (site?.confidence as Badge) || 'DATA_UNAVAILABLE';
+  const siteBadge: Badge = (site?.site_score?.status as Badge) || (site?.confidence as Badge) || (site ? 'ESTIMATED' : 'DATA_UNAVAILABLE');
   const num = (b: SiteBucket | undefined): number | null => (b && typeof b.mapped_count === 'number' ? b.mapped_count : null);
   const fmt = (n?: number | null) => (typeof n === 'number' ? n.toLocaleString('en-IN') : '—');
 
@@ -77,6 +69,13 @@ export const SiteMetricsGrid: React.FC<Props> = ({ onboardingData }) => {
         </h2>
         <span className="text-xs font-medium text-gray-500">District baseline + live OSM · 5km radius</span>
       </div>
+
+      {site?.notice && (
+        <div className="flex items-start gap-2 rounded-xl border border-amber-300/60 bg-amber-50 px-4 py-3 text-xs text-amber-800">
+          <span aria-hidden>⚠</span>
+          <span>{site.notice} Values below are best-available and clearly badged — nothing is invented.</span>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white rounded-2xl border border-gray-200/80 shadow-sm p-6 flex flex-col justify-between hover:shadow-md transition-shadow">

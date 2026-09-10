@@ -3,14 +3,16 @@
 import React, { useState, useEffect } from 'react';
 import { EvidenceBadge } from '@/components/ui/EvidenceBadge';
 import { apiClient } from '@/lib/apiClient';
-import { Wallet, Calculator, Gift, RefreshCw } from 'lucide-react';
+import { Wallet, Calculator, Gift, RefreshCw, CheckCircle2, Sparkles } from 'lucide-react';
 
 interface DynamicFinanceCalculatorProps {
   initialCapital: number;
+  selectedCandidate?: any;
 }
 
 export const DynamicFinanceCalculator: React.FC<DynamicFinanceCalculatorProps> = ({
   initialCapital,
+  selectedCandidate,
 }) => {
   const [capital, setCapital] = useState<number>(initialCapital > 0 ? initialCapital : 150000);
 
@@ -27,6 +29,15 @@ export const DynamicFinanceCalculator: React.FC<DynamicFinanceCalculatorProps> =
   } | null>(null);
   const [isLoadingApi, setIsLoadingApi] = useState<boolean>(false);
   const [apiError, setApiError] = useState<string>('');
+
+  // Extract selected business budget norms if available
+  const businessTitle = selectedCandidate?.title || selectedCandidate?.business;
+  const minCost = selectedCandidate?.capitalMin || selectedCandidate?.capital_min_inr || 1500000;
+  const maxCost = selectedCandidate?.capitalMax || selectedCandidate?.capital_max_inr || 2500000;
+  const typCost = (minCost + maxCost) / 2;
+  const minMargin = Math.round(minCost * 0.10);
+  const typMargin = Math.round(typCost * 0.10);
+  const maxMargin = Math.round(maxCost * 0.10);
 
   useEffect(() => {
     if (initialCapital > 0) {
@@ -79,6 +90,8 @@ export const DynamicFinanceCalculator: React.FC<DynamicFinanceCalculatorProps> =
     }).format(amount);
   };
 
+  const fmtL = (n: number) => (n >= 100000 ? `₹${(n / 100000).toFixed(1)}L` : `₹${Math.round(n / 1000)}k`);
+
   return (
     <div className="bg-white rounded-2xl border border-gray-200/90 shadow-sm p-6 lg:p-8 mb-10">
       {/* Header */}
@@ -91,7 +104,7 @@ export const DynamicFinanceCalculator: React.FC<DynamicFinanceCalculatorProps> =
             Easy Bank Loan & Monthly EMI Calculator
           </h2>
           <p className="text-xs text-gray-500 mt-1">
-            Calculated automatically based on your actual capital. Move the slider to test different amounts.
+            Calculated automatically based on your actual capital and selected business budget. Move the slider to test different amounts.
           </p>
         </div>
 
@@ -100,6 +113,63 @@ export const DynamicFinanceCalculator: React.FC<DynamicFinanceCalculatorProps> =
           <EvidenceBadge status={hasBackend ? 'VERIFIED' : 'DATA_UNAVAILABLE'} />
         </div>
       </div>
+
+      {/* Selected Business Choice Synced Budget Banner */}
+      {businessTitle && (
+        <div className="mb-6 p-4 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl border border-indigo-700/60 shadow-md space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-2.5">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-amber-400" />
+              <span className="text-xs font-extrabold text-indigo-200 uppercase tracking-wider">Synced Business Choice:</span>
+              <span className="text-sm font-black text-white">{businessTitle}</span>
+            </div>
+            <span className="text-xs font-bold text-emerald-400 bg-emerald-950/80 border border-emerald-500/40 px-3 py-0.5 rounded-full">
+              Evaluated Budget: {fmtL(minCost)} – {fmtL(maxCost)}
+            </span>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+            <span className="text-slate-300 font-medium">
+              Preset budget targets for <strong>{businessTitle}</strong> (10% Margin Money):
+            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setCapital(minMargin)}
+                className={`px-3 py-1 rounded-lg font-bold border transition-all ${
+                  Math.abs(capital - minMargin) < 5000
+                    ? 'bg-emerald-500 text-slate-950 border-emerald-400 shadow-sm'
+                    : 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700'
+                }`}
+              >
+                Min Budget ({fmtL(minMargin)})
+              </button>
+              <button
+                type="button"
+                onClick={() => setCapital(typMargin)}
+                className={`px-3 py-1 rounded-lg font-bold border transition-all ${
+                  Math.abs(capital - typMargin) < 5000
+                    ? 'bg-emerald-500 text-slate-950 border-emerald-400 shadow-sm'
+                    : 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700'
+                }`}
+              >
+                Typical Budget ({fmtL(typMargin)})
+              </button>
+              <button
+                type="button"
+                onClick={() => setCapital(maxMargin)}
+                className={`px-3 py-1 rounded-lg font-bold border transition-all ${
+                  Math.abs(capital - maxMargin) < 5000
+                    ? 'bg-emerald-500 text-slate-950 border-emerald-400 shadow-sm'
+                    : 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700'
+                }`}
+              >
+                Max Budget ({fmtL(maxMargin)})
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {apiError && (
         <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-xs font-semibold">
@@ -132,19 +202,19 @@ export const DynamicFinanceCalculator: React.FC<DynamicFinanceCalculatorProps> =
 
         <input
           type="range"
-          min="50000"
-          max="5000000"
-          step="50000"
+          min="25000"
+          max="1000000"
+          step="25000"
           value={capital}
           onChange={(e) => setCapital(Number(e.target.value))}
           className="w-full h-2.5 bg-blue-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
         />
 
         <div className="flex justify-between text-[11px] font-bold text-blue-700">
-          <span>₹50,000</span>
-          <span>₹10 Lakhs</span>
-          <span>₹25 Lakhs</span>
-          <span>₹50 Lakhs</span>
+          <span>₹25,000</span>
+          <span>₹2.5 Lakhs</span>
+          <span>₹5.0 Lakhs</span>
+          <span>₹10.0 Lakhs</span>
         </div>
       </div>
 

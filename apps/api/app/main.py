@@ -6,7 +6,22 @@ load_dotenv()
 
 from .api.routes import ground_truth, dpr, intelligence, schemes, decision, data_health, places
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI(title="LAND2BIZ API", version="0.2.0")
+
+@app.on_event("startup")
+def warmup_external_sources():
+    from .services.geo_live import warmup_external_sources as warmup
+    warmup()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 from .core.exceptions import Land2BizException, land2biz_exception_handler
 app.add_exception_handler(Land2BizException, land2biz_exception_handler)
