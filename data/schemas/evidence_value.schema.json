@@ -1,0 +1,133 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LAND2BIZ Canonical Evidence Value Schema",
+  "type": "object",
+  "required": [
+    "value",
+    "unit",
+    "data_type",
+    "source",
+    "evidence",
+    "geography",
+    "time",
+    "classification",
+    "method",
+    "legal",
+    "limitations",
+    "engine_usage"
+  ],
+  "properties": {
+    "value": { "type": ["number", "string", "boolean", "null", "array", "object"] },
+    "unit": { "type": ["string", "null"] },
+    "data_type": { "type": ["string", "null"], "enum": ["integer", "float", "string", "boolean", "ratio", "currency_inr", "percentage", "coordinate", "object", null] },
+
+    "source": {
+      "type": "object",
+      "required": ["source_id", "source_name", "organization", "official_url", "source_type", "authority_level"],
+      "properties": {
+        "source_id": { "type": ["string", "null"] },
+        "source_name": { "type": ["string", "null"] },
+        "organization": { "type": ["string", "null"] },
+        "official_url": { "type": ["string", "null"] },
+        "source_type": { "type": ["string", "null"] },
+        "authority_level": { "type": ["string", "null"], "enum": ["LEVEL 1", "LEVEL 2", "LEVEL 3", "LEVEL 4", "LEVEL 5", "LEVEL 6", "LEVEL 7", null] }
+      }
+    },
+
+    "evidence": {
+      "type": "object",
+      "required": ["document_title", "document_url", "document_version", "publication_date", "effective_from", "effective_to", "table", "section", "page", "field", "record_id", "raw_reference"],
+      "properties": {
+        "document_title": { "type": ["string", "null"] },
+        "document_url": { "type": ["string", "null"] },
+        "document_version": { "type": ["string", "null"] },
+        "publication_date": { "type": ["string", "null"] },
+        "effective_from": { "type": ["string", "null"] },
+        "effective_to": { "type": ["string", "null"] },
+        "table": { "type": ["string", "null"] },
+        "section": { "type": ["string", "null"] },
+        "page": { "type": ["string", "null"] },
+        "field": { "type": ["string", "null"] },
+        "record_id": { "type": ["string", "null"] },
+        "raw_reference": { "type": ["string", "null"] }
+      }
+    },
+
+    "geography": {
+      "type": "object",
+      "required": ["country", "state", "district", "block", "village", "lat", "lng", "radius_km", "geographic_level"],
+      "properties": {
+        "country": { "type": ["string", "null"] },
+        "state": { "type": ["string", "null"] },
+        "district": { "type": ["string", "null"] },
+        "block": { "type": ["string", "null"] },
+        "village": { "type": ["string", "null"] },
+        "lat": { "type": ["number", "null"] },
+        "lng": { "type": ["number", "null"] },
+        "radius_km": { "type": ["number", "null"] },
+        "geographic_level": { "type": ["string", "null"], "enum": ["national", "state", "district", "block", "village", "coordinate_radius", null] }
+      }
+    },
+
+    "time": {
+      "type": "object",
+      "required": ["data_period", "retrieved_at", "freshness_status"],
+      "properties": {
+        "data_period": { "type": ["string", "null"] },
+        "retrieved_at": { "type": ["string", "null"] },
+        "freshness_status": { "type": ["string", "null"], "enum": ["LIVE", "CURRENT", "RECENT", "HISTORICAL", "SURVEY_PERIOD", "VERSIONED", "STALE", "UNKNOWN", null] }
+      }
+    },
+
+    "classification": {
+      "type": "object",
+      "required": ["status", "evidence_class", "confidence", "data_completeness"],
+      "properties": {
+        "status": { "type": ["string", "null"], "enum": ["VERIFIED", "ESTIMATED", "USER_PROVIDED", "DERIVED", "ASSUMED", "NEEDS_VERIFICATION", "DATA_UNAVAILABLE", "SOURCE_UNVERIFIED", "SOURCE_CONFLICT", "STALE", null] },
+        "evidence_class": { "type": ["string", "null"], "enum": ["CLASS A", "CLASS B", "CLASS C", "CLASS D", "CLASS E", "CLASS F", null] },
+        "confidence": { "type": ["integer", "null"] },
+        "data_completeness": { "type": ["integer", "null"] }
+      }
+    },
+
+    "method": {
+      "type": "object",
+      "required": ["raw_value", "transformation", "formula", "assumptions", "derived_from"],
+      "properties": {
+        "raw_value": { "type": ["number", "string", "boolean", "null", "object", "array"] },
+        "transformation": { "type": ["string", "null"] },
+        "formula": { "type": ["string", "null"] },
+        "assumptions": { "type": "array", "items": { "type": "string" } },
+        "derived_from": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+
+    "legal": {
+      "type": "object",
+      "required": ["access_method", "license", "permitted_use", "commercial_use", "storage_allowed", "caching_allowed", "attribution_required", "legal_status", "verification_date"],
+      "properties": {
+        "access_method": { "type": ["string", "null"] },
+        "license": { "type": ["string", "null"] },
+        "permitted_use": { "type": ["string", "null"] },
+        "commercial_use": { "type": ["string", "null"] },
+        "storage_allowed": { "type": ["boolean", "null"] },
+        "caching_allowed": { "type": ["boolean", "null"] },
+        "attribution_required": { "type": ["boolean", "null"] },
+        "legal_status": { "type": ["string", "null"], "enum": ["LEGAL_USE_VERIFIED", "LEGAL_USE_RESTRICTED", "LEGAL_USE_UNVERIFIED", "LEGAL_USE_NOT_PERMITTED", null] },
+        "verification_date": { "type": ["string", "null"] }
+      }
+    },
+
+    "limitations": { "type": "array", "items": { "type": "string" } },
+
+    "engine_usage": {
+      "type": "object",
+      "required": ["modules", "used_in_calculation", "metrics_affected"],
+      "properties": {
+        "modules": { "type": "array", "items": { "type": "string" } },
+        "used_in_calculation": { "type": "boolean" },
+        "metrics_affected": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

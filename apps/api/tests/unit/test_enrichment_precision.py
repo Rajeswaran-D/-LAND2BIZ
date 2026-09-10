@@ -144,3 +144,55 @@ def test_multi_location_verification():
         assert prof["population_estimate_2026"]["status"] == "ESTIMATED"
         assert "regional_demand_signal" in prof
         assert prof["regional_demand_signal"]["status"] == "VERIFIED_STATISTICAL_BASELINE"
+
+
+def test_evidence_value_schema_exists():
+    path = os.path.join(REPO_ROOT, "data", "schemas", "evidence_value.schema.json")
+    assert os.path.exists(path), "evidence_value.schema.json missing"
+    with open(path, encoding="utf-8") as f:
+        schema = json.load(f)
+    assert "title" in schema
+    assert "properties" in schema
+    assert "legal" in schema["properties"]
+    assert "evidence" in schema["properties"]
+
+
+def test_machine_readable_datasets_catalog():
+    path = os.path.join(REPO_ROOT, "data", "catalog", "datasets.json")
+    assert os.path.exists(path), "datasets.json missing"
+    with open(path, encoding="utf-8") as f:
+        catalog = json.load(f)
+    assert isinstance(catalog, list)
+    assert len(catalog) >= 12
+    for ds in catalog:
+        assert "dataset_id" in ds
+        assert "authority_level" in ds
+        assert "legal_status" in ds
+        assert "confidence_method" in ds
+
+
+def test_canonical_evidence_constructor():
+    from app.core.provenance import canonical_evidence
+    ev = canonical_evidence(
+        value=3458045,
+        unit="persons",
+        data_type="integer",
+        source_id="census_2011_tn",
+        source_name="Census of India 2011",
+        organization="Office of the Registrar General & Census Commissioner",
+        official_url="https://censusindia.gov.in/",
+        authority_level="LEVEL 1",
+        document_title="District Census Handbook Tamil Nadu 2011",
+        table="Table A-02",
+        district="Coimbatore",
+        status="VERIFIED_BASELINE",
+        evidence_class="CLASS A",
+        confidence=95,
+        legal_status="LEGAL_USE_VERIFIED",
+    )
+    assert ev["value"] == 3458045
+    assert ev["classification"]["status"] == "VERIFIED_BASELINE"
+    assert ev["classification"]["evidence_class"] == "CLASS A"
+    assert ev["legal"]["legal_status"] == "LEGAL_USE_VERIFIED"
+    assert ev["evidence"]["table"] == "Table A-02"
+
