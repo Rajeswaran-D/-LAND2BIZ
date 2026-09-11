@@ -78,19 +78,19 @@ export const DetailedOpportunitiesList: React.FC = () => {
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 bg-slate-900 text-white rounded-xl mb-4">
                   <div>
-                    <span className="text-[10px] text-slate-400 font-bold uppercase block mb-0.5">💰 Money Needed</span>
+                    <span className="text-[10px] text-slate-400 font-bold uppercase block mb-0.5">Money Needed</span>
                     <span className="text-sm font-extrabold text-emerald-400">{fmtL(minCap)} – {fmtL(maxCap)}</span>
                   </div>
                   <div>
-                    <span className="text-[10px] text-slate-400 font-bold uppercase block mb-0.5">💵 Typical Net</span>
+                    <span className="text-[10px] text-slate-400 font-bold uppercase block mb-0.5">Typical Net</span>
                     <span className="text-sm font-extrabold text-emerald-400">~₹{monthlyNet.toLocaleString('en-IN')} / mo</span>
                   </div>
                   <div>
-                    <span className="text-[10px] text-slate-400 font-bold uppercase block mb-0.5">⏱️ Payback</span>
+                    <span className="text-[10px] text-slate-400 font-bold uppercase block mb-0.5">Payback</span>
                     <span className="text-sm font-extrabold text-blue-300">~{((item.payback_months_typical || 36) / 12).toFixed(1)} yrs</span>
                   </div>
                   <div>
-                    <span className="text-[10px] text-slate-400 font-bold uppercase block mb-0.5">📈 Margin</span>
+                    <span className="text-[10px] text-slate-400 font-bold uppercase block mb-0.5">Margin</span>
                     <span className="text-sm font-extrabold text-amber-300">~{item.margin_pct_typical || 25}%</span>
                   </div>
                 </div>

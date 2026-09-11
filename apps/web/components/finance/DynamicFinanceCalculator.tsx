@@ -222,7 +222,7 @@ export const DynamicFinanceCalculator: React.FC<DynamicFinanceCalculatorProps> =
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <div className="p-5 rounded-2xl bg-slate-900 text-white space-y-1">
           <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
-            🏗️ Total Project Cost
+            Total Project Cost
           </span>
           <div className="text-xl font-black text-white">{formatCurrency(projectCost)}</div>
           <span className="text-[10px] text-slate-400 block">Based on 10% owner money</span>
@@ -230,7 +230,7 @@ export const DynamicFinanceCalculator: React.FC<DynamicFinanceCalculatorProps> =
 
         <div className="p-5 rounded-2xl bg-blue-50 border border-blue-200 text-blue-950 space-y-1">
           <span className="text-[10px] text-blue-700 font-bold uppercase tracking-wider block">
-            💰 Your Available Money
+            Your Available Money
           </span>
           <div className="text-xl font-black text-blue-900">{formatCurrency(capital)}</div>
           <span className="text-[10px] text-blue-700 block">10% Margin Money Contribution</span>
@@ -238,7 +238,7 @@ export const DynamicFinanceCalculator: React.FC<DynamicFinanceCalculatorProps> =
 
         <div className="p-5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-950 space-y-1">
           <span className="text-[10px] text-amber-800 font-bold uppercase tracking-wider block">
-            🏦 Bank Loan Needed
+            Bank Loan Needed
           </span>
           <div className="text-xl font-black text-amber-900">{formatCurrency(loanAmount)}</div>
           <span className="text-[10px] text-amber-800 block">90% Funded by Partner Bank</span>
@@ -246,7 +246,7 @@ export const DynamicFinanceCalculator: React.FC<DynamicFinanceCalculatorProps> =
 
         <div className="p-5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950 space-y-1">
           <span className="text-[10px] text-emerald-800 font-bold uppercase tracking-wider block">
-            🗓️ Monthly Loan EMI
+            Monthly Loan EMI
           </span>
           <div className="text-xl font-black text-emerald-900">{hasBackend ? `${formatCurrency(emi)} / mo` : '—'}</div>
           <span className="text-[10px] text-emerald-800 block">

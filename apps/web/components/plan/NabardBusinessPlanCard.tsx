@@ -73,19 +73,19 @@ export const NabardBusinessPlanCard: React.FC<Props> = ({ financeSkipped, select
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2 border-t border-slate-800">
               <div>
-                <span className="text-[10px] text-slate-400 font-bold uppercase block mb-0.5">💰 Capital Range</span>
+                <span className="text-[10px] text-slate-400 font-bold uppercase block mb-0.5">Capital Range</span>
                 <span className="text-sm font-extrabold text-emerald-400">₹{(minCap / 100000).toFixed(1)}L – ₹{(maxCap / 100000).toFixed(1)}L</span>
               </div>
               <div>
-                <span className="text-[10px] text-slate-400 font-bold uppercase block mb-0.5">💵 Typical Monthly Net</span>
+                <span className="text-[10px] text-slate-400 font-bold uppercase block mb-0.5">Typical Monthly Net</span>
                 <span className="text-sm font-extrabold text-emerald-400">~₹{monthlyNet.toLocaleString('en-IN')} / mo</span>
               </div>
               <div>
-                <span className="text-[10px] text-slate-400 font-bold uppercase block mb-0.5">⏱️ Payback Period</span>
+                <span className="text-[10px] text-slate-400 font-bold uppercase block mb-0.5">Payback Period</span>
                 <span className="text-sm font-extrabold text-blue-300">~{((selectedCandidate?.paybackMonths || top.payback_months_typical || 36) / 12).toFixed(1)} yrs</span>
               </div>
               <div>
-                <span className="text-[10px] text-slate-400 font-bold uppercase block mb-0.5">✨ Margin</span>
+                <span className="text-[10px] text-slate-400 font-bold uppercase block mb-0.5">Operating Margin</span>
                 <span className="text-sm font-extrabold text-amber-300">~{selectedCandidate?.marginPct || top.margin_pct_typical || 25}%</span>
               </div>
             </div>

@@ -35,12 +35,17 @@ export const MarketGapSection: React.FC<Props> = ({ onboardingData }) => {
     return () => { live = false; };
   }, [onboardingData]);
 
-  const num = (b: any) => (b && typeof b.mapped_count === 'number' ? b.mapped_count : null);
+  const num = (b: any): number | null => {
+    if (!b) return null;
+    if (typeof b.mapped_count === 'number') return b.mapped_count;
+    return null;
+  };
+  const isBaseline = (b: any): boolean => !!(b && b.is_baseline);
   const sectors = market ? [
-    { label: 'Retail mapped', value: num(market.counts?.market) },
-    { label: 'Cold-chain mapped', value: num(market.counts?.cold_storage) },
-    { label: 'Dairy mapped', value: num(market.counts?.dairy) },
-    { label: 'Fuel/EV mapped', value: num(market.counts?.fuel_ev) },
+    { label: 'Retail', value: num(market.counts?.market), baseline: isBaseline(market.counts?.market) },
+    { label: 'Cold-chain', value: num(market.counts?.cold_storage), baseline: isBaseline(market.counts?.cold_storage) },
+    { label: 'Dairy', value: num(market.counts?.dairy), baseline: isBaseline(market.counts?.dairy) },
+    { label: 'Fuel / EV', value: num(market.counts?.fuel_ev), baseline: isBaseline(market.counts?.fuel_ev) },
   ] : [];
 
   const synthesis = decision?.market_gap_synthesis;
@@ -90,8 +95,14 @@ export const MarketGapSection: React.FC<Props> = ({ onboardingData }) => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
           {sectors.map((s) => (
             <div key={s.label} className="bg-white p-4 rounded-xl border border-gray-200/80 text-center">
-              <div className="text-xs text-gray-500 font-bold uppercase">{s.label}</div>
-              <div className="text-xl font-black text-gray-900 my-1">{s.value ?? '0'} mapped</div>
+              <div className="text-xs text-gray-500 font-bold uppercase tracking-wider">{s.label}</div>
+              <div className="text-xl font-black text-gray-900 my-1">
+                {s.value !== null ? s.value : '—'}
+                <span className="text-xs font-semibold text-gray-500 ml-1">mapped</span>
+              </div>
+              {s.baseline && (
+                <div className="text-[10px] text-amber-700 font-semibold">Est. (benchmark)</div>
+              )}
             </div>
           ))}
         </div>

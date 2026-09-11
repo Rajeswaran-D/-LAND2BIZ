@@ -72,7 +72,7 @@ export const GovernmentSchemesGrid: React.FC<GovernmentSchemesGridProps> = ({ us
         </div>
         <span className="text-xs text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full font-bold border border-emerald-200">
           {isWoman
-            ? '👩‍💼 Women rural: 35% PMEGP slab'
+            ? 'Women rural: 35% PMEGP slab'
             : isSpecial
             ? 'Special rural: 35% PMEGP slab'
             : 'General rural: 25% PMEGP slab'}

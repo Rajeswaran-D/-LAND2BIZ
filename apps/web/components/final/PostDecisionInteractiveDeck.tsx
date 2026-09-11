@@ -420,7 +420,7 @@ export const PostDecisionInteractiveDeck: React.FC<PostDecisionInteractiveDeckPr
                   </p>
                   <div className="flex items-center justify-between text-xs pt-1 border-t border-gray-200/60">
                     <span className="font-extrabold text-gray-900">Price: ₹16,50,000</span>
-                    <span className="text-blue-700 font-bold">📞 +91 98230 11220</span>
+                    <span className="text-blue-700 font-bold">Tel: +91 98230 11220</span>
                   </div>
                 </div>
 
@@ -437,7 +437,7 @@ export const PostDecisionInteractiveDeck: React.FC<PostDecisionInteractiveDeckPr
                   </p>
                   <div className="flex items-center justify-between text-xs pt-1 border-t border-gray-200/60">
                     <span className="font-extrabold text-gray-900">Price: ₹18,00,000</span>
-                    <span className="text-blue-700 font-bold">📞 1800-209-8282</span>
+                    <span className="text-blue-700 font-bold">Tel: 1800-209-8282</span>
                   </div>
                 </div>
               </div>

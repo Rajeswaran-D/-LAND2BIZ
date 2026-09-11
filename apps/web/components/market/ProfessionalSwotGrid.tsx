@@ -89,7 +89,7 @@ export const ProfessionalSwotGrid: React.FC = () => {
             <li className="p-2.5 bg-amber-50/60 rounded-lg space-y-1">
               <strong className="text-gray-900 block font-bold">Power Sanction & Load:</strong>
               <span className="inline-block text-[11px] font-bold text-amber-900 bg-amber-100 px-2 py-0.5 rounded">
-                ⚡ Fix: Verify 3-Phase commercial DISCOM load before equipment purchase.
+                Fix: Verify 3-Phase commercial DISCOM load before equipment purchase.
               </span>
             </li>
           </ul>
@@ -134,7 +134,7 @@ export const ProfessionalSwotGrid: React.FC = () => {
             <li className="p-2.5 bg-rose-50/60 rounded-lg space-y-1">
               <strong className="text-gray-900 block font-bold">Debt Service Coverage & Seasonality:</strong>
               <span className="inline-block text-[11px] font-bold text-rose-900 bg-rose-100 px-2 py-0.5 rounded">
-                🛡️ Fix: Apply for PMFME/PMEGP capital subsidy (up to 35%) to reduce debt service burden.
+                Fix: Apply for PMFME/PMEGP capital subsidy (up to 35%) to reduce debt service burden.
               </span>
             </li>
           </ul>

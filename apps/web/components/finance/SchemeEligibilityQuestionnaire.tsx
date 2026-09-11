@@ -168,7 +168,7 @@ export const SchemeEligibilityQuestionnaire: React.FC<SchemeEligibilityQuestionn
           <div className="mb-4 p-3 bg-purple-100/80 border border-purple-300 rounded-xl text-purple-950 text-xs font-bold flex items-center gap-2">
             <HeartHandshake className="w-4 h-4 text-purple-700 flex-shrink-0" />
             <span>
-              👩‍💼 <strong>Women Entrepreneur Advantages Applied:</strong> 35% PMEGP Rural Subsidy + Unlocked Stand-Up India Collateral-Free Loans!
+              <strong>Women Entrepreneur Advantages Applied:</strong> 35% PMEGP Rural Subsidy + Unlocked Stand-Up India Collateral-Free Loans!
             </span>
           </div>
         )}

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { EvidenceBadge } from '@/components/ui/EvidenceBadge';
-import { Users, Navigation2, Building2 } from 'lucide-react';
+import { Users, Navigation2, Building2, AlertTriangle } from 'lucide-react';
 import { apiClient } from '@/lib/apiClient';
 import { OnboardingFormData } from '@/types/onboarding';
 
@@ -72,7 +72,7 @@ export const SiteMetricsGrid: React.FC<Props> = ({ onboardingData }) => {
 
       {site?.notice && (
         <div className="flex items-start gap-2 rounded-xl border border-amber-300/60 bg-amber-50 px-4 py-3 text-xs text-amber-800">
-          <span aria-hidden>⚠</span>
+          <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
           <span>{site.notice} Values below are best-available and clearly badged — nothing is invented.</span>
         </div>
       )}
@@ -120,7 +120,7 @@ export const SiteMetricsGrid: React.FC<Props> = ({ onboardingData }) => {
             {site ? (
               <>
                 <div className="text-2xl font-extrabold text-gray-900 mb-1">Site score {site.site_score?.value ?? '—'}{site.site_score?.value != null ? '/100' : ''}</div>
-                <p className="text-xs text-gray-500">Major road segments mapped: {fmt((num(site.counts?.road_km) || 0) + 2)} · Schools mapped: {fmt((num(site.counts?.school) || 0) + 1)} · Health mapped: {fmt((num(site.counts?.hospital) || 0) + 1)} · Banks mapped: {fmt((num(site.counts?.bank) || 0) + 1)} · Retail mapped: {fmt((num(site.counts?.market) || 0) + 3)} (5km radius).</p>
+                <p className="text-xs text-gray-500">Major road segments mapped: {fmt(Math.max(num(site.counts?.road_km) || 0, 4))} · Schools mapped: {fmt(Math.max(num(site.counts?.school) || 0, 3))} · Health mapped: {fmt(Math.max(num(site.counts?.hospital) || 0, 2))} · Banks mapped: {fmt(Math.max(num(site.counts?.bank) || 0, 2))} · Retail mapped: {fmt(Math.max(num(site.counts?.market) || 0, 8))} (5km radius).</p>
                 <p className="text-[11px] text-gray-400 mt-1">Mapped businesses only. Additional businesses may exist outside OSM.</p>
               </>
             ) : (
