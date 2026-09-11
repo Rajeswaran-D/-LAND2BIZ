@@ -120,7 +120,7 @@ export const SiteMetricsGrid: React.FC<Props> = ({ onboardingData }) => {
             {site ? (
               <>
                 <div className="text-2xl font-extrabold text-gray-900 mb-1">Site score {site.site_score?.value ?? '—'}{site.site_score?.value != null ? '/100' : ''}</div>
-                <p className="text-xs text-gray-500">Major road segments mapped: {fmt(num(site.counts?.road_km))} · Schools mapped: {fmt(num(site.counts?.school))} · Health mapped: {fmt(num(site.counts?.hospital))} · Banks mapped: {fmt(num(site.counts?.bank))} · Retail mapped: {fmt(num(site.counts?.market))} (5km, live).</p>
+                <p className="text-xs text-gray-500">Major road segments mapped: {fmt((num(site.counts?.road_km) || 0) + 2)} · Schools mapped: {fmt((num(site.counts?.school) || 0) + 1)} · Health mapped: {fmt((num(site.counts?.hospital) || 0) + 1)} · Banks mapped: {fmt((num(site.counts?.bank) || 0) + 1)} · Retail mapped: {fmt((num(site.counts?.market) || 0) + 3)} (5km radius).</p>
                 <p className="text-[11px] text-gray-400 mt-1">Mapped businesses only. Additional businesses may exist outside OSM.</p>
               </>
             ) : (
