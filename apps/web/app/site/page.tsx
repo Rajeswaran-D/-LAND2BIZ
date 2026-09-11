@@ -16,16 +16,25 @@ export default function SitePage() {
   const router = useRouter();
   const [onboardingData, setOnboardingData] = useState<OnboardingFormData | null>(null);
 
-  // Load onboarding data from sessionStorage on mount
+  // Load onboarding data from sessionStorage on mount and on update events
   useEffect(() => {
-    try {
-      const saved = sessionStorage.getItem('land2biz_onboarding_data');
-      if (saved) {
-        setOnboardingData(JSON.parse(saved));
+    const loadData = () => {
+      try {
+        const saved = sessionStorage.getItem('land2biz_onboarding_data');
+        if (saved) {
+          setOnboardingData(JSON.parse(saved));
+        }
+      } catch (err) {
+        console.error('Failed to load onboarding data:', err);
       }
-    } catch (err) {
-      console.error('Failed to load onboarding data:', err);
-    }
+    };
+
+    loadData();
+
+    window.addEventListener('land2biz_data_updated', loadData);
+    return () => {
+      window.removeEventListener('land2biz_data_updated', loadData);
+    };
   }, []);
 
   const formatCapitalDisplay = (amount?: number | '') => {

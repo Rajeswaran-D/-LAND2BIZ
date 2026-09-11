@@ -54,9 +54,51 @@ export const RegulatoryQuestionsModal: React.FC = () => {
     local_noc: 'unsure',
   });
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [saveSuccessMsg, setSaveSuccessMsg] = useState<string>('');
+
+  // Restore saved regulatory answers from sessionStorage on mount
+  React.useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem('land2biz_regulatory_answers');
+      if (saved) {
+        setAnswers(JSON.parse(saved));
+        setIsSubmitted(true);
+      }
+    } catch {
+      // Ignore parse errors
+    }
+  }, []);
 
   const handleSelectAnswer = (qId: string, val: 'yes' | 'no' | 'unsure') => {
     setAnswers((prev) => ({ ...prev, [qId]: val }));
+  };
+
+  const handleSaveAssessment = () => {
+    try {
+      // 1. Save regulatory answers to sessionStorage
+      sessionStorage.setItem('land2biz_regulatory_answers', JSON.stringify(answers));
+
+      // 2. Update onboarding data in sessionStorage if present
+      const savedOnboarding = sessionStorage.getItem('land2biz_onboarding_data');
+      if (savedOnboarding) {
+        const parsed = JSON.parse(savedOnboarding);
+        parsed.regulatory_answers = answers;
+        sessionStorage.setItem('land2biz_onboarding_data', JSON.stringify(parsed));
+      }
+
+      // 3. Invalidate cached decision analysis so fresh calculations run with updated regulatory answers
+      sessionStorage.removeItem('land2biz_decision_analysis');
+
+      // 4. Dispatch custom event so listeners re-fetch analysis immediately
+      window.dispatchEvent(new Event('land2biz_data_updated'));
+
+      setIsSubmitted(true);
+      setIsOpen(false);
+      setSaveSuccessMsg('Regulatory answers saved! Decision engine & risk scores updated.');
+      setTimeout(() => setSaveSuccessMsg(''), 4000);
+    } catch (err) {
+      console.error('Failed saving regulatory answers:', err);
+    }
   };
 
   // Compute Regulatory Score & Feasibility Status
@@ -110,6 +152,16 @@ export const RegulatoryQuestionsModal: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {/* Success Notification Banner */}
+      {saveSuccessMsg && (
+        <div className="mt-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 font-semibold flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            <span>{saveSuccessMsg}</span>
+          </div>
+        </div>
+      )}
 
       {/* Summary Alert */}
       {!isOpen && (
@@ -226,10 +278,7 @@ export const RegulatoryQuestionsModal: React.FC = () => {
 
             <button
               type="button"
-              onClick={() => {
-                setIsSubmitted(true);
-                setIsOpen(false);
-              }}
+              onClick={handleSaveAssessment}
               className="bg-blue-600 text-white font-semibold text-xs px-5 py-2.5 rounded-lg hover:bg-blue-700 transition-all shadow-md"
             >
               Apply Assessment & Save

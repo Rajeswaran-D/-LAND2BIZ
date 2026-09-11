@@ -91,28 +91,40 @@ let inFlightAnalyze: Promise<DecisionAnalysisResponse | null> | null = null;
 let lastAnalyzeFailureAt = 0;
 const ANALYZE_FAILURE_RETRY_MS = 10_000;
 
-export const fetchDecisionAnalysis = async (onboardingData: any): Promise<DecisionAnalysisResponse | null> => {
+export const fetchDecisionAnalysis = async (onboardingData: any, forceRefresh: boolean = false): Promise<DecisionAnalysisResponse | null> => {
   if (typeof window === 'undefined') return null;
 
-  const cached = sessionStorage.getItem('land2biz_decision_analysis');
-  if (cached) {
-    try {
-      return JSON.parse(cached);
-    } catch (e) {
-      console.error("Failed parsing cached decision analysis:", e);
+  if (!forceRefresh) {
+    const cached = sessionStorage.getItem('land2biz_decision_analysis');
+    if (cached) {
+      try {
+        return JSON.parse(cached);
+      } catch (e) {
+        console.error("Failed parsing cached decision analysis:", e);
+      }
     }
   }
 
   // Several components request the same analysis on mount — share one request
-  // instead of firing the heavy pipeline once per component.
-  if (inFlightAnalyze) return inFlightAnalyze;
-  if (Date.now() - lastAnalyzeFailureAt < ANALYZE_FAILURE_RETRY_MS) return null;
+  if (inFlightAnalyze && !forceRefresh) return inFlightAnalyze;
+  if (Date.now() - lastAnalyzeFailureAt < ANALYZE_FAILURE_RETRY_MS && !forceRefresh) return null;
 
   const district = onboardingData?.fullAddress?.district || 'Coimbatore';
   const lat = onboardingData?.coordinates?.lat ?? null;
   const lon = onboardingData?.coordinates?.lng ?? null;
   const capital = (typeof onboardingData?.capital === 'number' && onboardingData.capital > 0) ? onboardingData.capital : 150000;
   const land_type = onboardingData?.landType || 'commercial';
+
+  // Retrieve regulatory answers from sessionStorage or onboardingData
+  let answers = onboardingData?.regulatory_answers || {};
+  try {
+    const savedReg = sessionStorage.getItem('land2biz_regulatory_answers');
+    if (savedReg) {
+      answers = JSON.parse(savedReg);
+    }
+  } catch {
+    // Ignore parse error
+  }
 
   inFlightAnalyze = (async () => {
     try {
@@ -125,6 +137,7 @@ export const fetchDecisionAnalysis = async (onboardingData: any): Promise<Decisi
           lon,
           margin_capital: capital,
           land_type,
+          answers,
           is_rural: true
         })
       });

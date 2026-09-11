@@ -32,46 +32,58 @@ export const ComparativeCandidatesDeck: React.FC<Props> = ({ selectedId, onSelec
 
   useEffect(() => {
     let live = true;
-    let onboardingData: any = null;
-    try {
-      const saved = sessionStorage.getItem('land2biz_onboarding_data');
-      if (saved) onboardingData = JSON.parse(saved);
-    } catch (e) {}
 
-    fetchDecisionAnalysis(onboardingData)
-      .then((d) => {
-        if (!live || !d || !d.ranking) return;
-        const items: CandidateBusiness[] = d.ranking.slice(0, 3).map((r: any) => {
-          const minCap = r.capital_min_inr || 1500000;
-          const maxCap = r.capital_max_inr || 2500000;
-          const whyStr = (r.why_this_location && r.why_this_location[0])
-            ? r.why_this_location[0]
-            : 'AI analyzed district census & ODOP produce fit.';
+    const loadDeck = (force: boolean = false) => {
+      let onboardingData: any = null;
+      try {
+        const saved = sessionStorage.getItem('land2biz_onboarding_data');
+        if (saved) onboardingData = JSON.parse(saved);
+      } catch (e) {}
 
-          return {
-            id: r.id || r.business || 'business_1',
-            title: r.title || r.business || 'Rural Enterprise',
-            category: r.category || r.business,
-            capitalMin: minCap,
-            capitalMax: maxCap,
-            monthlyNet: r.monthly_net_inr || Math.round(minCap * 0.08),
-            paybackMonths: r.payback_months_typical || 36,
-            marginPct: r.margin_pct_typical || 25,
-            equipment: r.key_equipment || ['Processing/Storage Tools', 'Utility Panel'],
-            utilities: r.utilities || '3-Phase Commercial Power, Road Access',
-            tagline: whyStr,
-            whyThisLocation: r.why_this_location || [],
-            targetCustomers: r.target_customers || [],
-            overallScore: r.overall_score || 75.0,
-          };
-        });
-        setDeck(items);
-        if (items.length && (!selectedId || !items.find((i) => i.id === selectedId))) {
-          onSelect(items[0]);
-        }
-      })
-      .catch(() => {});
-    return () => { live = false; };
+      fetchDecisionAnalysis(onboardingData, force)
+        .then((d) => {
+          if (!live || !d || !d.ranking) return;
+          const items: CandidateBusiness[] = d.ranking.slice(0, 3).map((r: any) => {
+            const minCap = r.capital_min_inr || 1500000;
+            const maxCap = r.capital_max_inr || 2500000;
+            const whyStr = (r.why_this_location && r.why_this_location[0])
+              ? r.why_this_location[0]
+              : 'AI analyzed district census & ODOP produce fit.';
+
+            return {
+              id: r.id || r.business || 'business_1',
+              title: r.title || r.business || 'Rural Enterprise',
+              category: r.category || r.business,
+              capitalMin: minCap,
+              capitalMax: maxCap,
+              monthlyNet: r.monthly_net_inr || Math.round(minCap * 0.08),
+              paybackMonths: r.payback_months_typical || 36,
+              marginPct: r.margin_pct_typical || 25,
+              equipment: r.key_equipment || ['Processing/Storage Tools', 'Utility Panel'],
+              utilities: r.utilities || '3-Phase Commercial Power, Road Access',
+              tagline: whyStr,
+              whyThisLocation: r.why_this_location || [],
+              targetCustomers: r.target_customers || [],
+              overallScore: r.overall_score || 75.0,
+            };
+          });
+          setDeck(items);
+          if (items.length && (!selectedId || !items.find((i) => i.id === selectedId))) {
+            onSelect(items[0]);
+          }
+        })
+        .catch(() => {});
+    };
+
+    loadDeck(false);
+
+    const handleUpdate = () => loadDeck(true);
+    window.addEventListener('land2biz_data_updated', handleUpdate);
+
+    return () => {
+      live = false;
+      window.removeEventListener('land2biz_data_updated', handleUpdate);
+    };
   }, []);
 
   const fmtL = (n: number) => (n >= 100000 ? `₹${(n / 100000).toFixed(1)}L` : `₹${Math.round(n / 1000)}k`);

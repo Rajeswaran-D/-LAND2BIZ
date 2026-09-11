@@ -49,16 +49,39 @@ def rank(services: dict) -> dict:
         comp = _clamp(subs["competition_density"]["value"])
         govt = _clamp(subs["govt"]["value"])
 
-        overall = round(
-            WEIGHTS["site"] * site +
-            WEIGHTS["market_gap"] * gap +
-            WEIGHTS["financial"] * fin +
-            WEIGHTS["competition_inv"] * (100 - comp) +
-            WEIGHTS["govt"] * govt,
-            1
-        )
-        confs = [subs[k].get("confidence", 50) for k in ("site", "market_gap", "financial", "competition_density", "govt")]
+        if "regulatory" in subs and subs["regulatory"].get("value") is not None:
+            reg_val = _clamp(subs["regulatory"]["value"])
+            overall = round(
+                0.20 * site +
+                0.20 * gap +
+                0.20 * fin +
+                0.15 * (100 - comp) +
+                0.15 * govt +
+                0.10 * reg_val,
+                1
+            )
+            formula_str = "0.20*site + 0.20*market_gap + 0.20*financial + 0.15*(100-comp) + 0.15*govt + 0.10*regulatory"
+            weights_dict = {"site": 0.20, "market_gap": 0.20, "financial": 0.20, "competition_inv": 0.15, "govt": 0.15, "regulatory": 0.10}
+        else:
+            overall = round(
+                WEIGHTS["site"] * site +
+                WEIGHTS["market_gap"] * gap +
+                WEIGHTS["financial"] * fin +
+                WEIGHTS["competition_inv"] * (100 - comp) +
+                WEIGHTS["govt"] * govt,
+                1
+            )
+            formula_str = FORMULA
+            weights_dict = WEIGHTS
+
+        confs = [subs[k].get("confidence", 50) for k in ("site", "market_gap", "financial", "competition_density", "govt") if k in subs]
+        if "regulatory" in subs and subs["regulatory"].get("confidence") is not None:
+            confs.append(subs["regulatory"].get("confidence", 60))
         confidence = round(sum(confs) / len(confs))
+
+        subscores_dict = {k: subs[k] for k in ("site", "market_gap", "financial", "competition_density", "govt") if k in subs}
+        if "regulatory" in subs:
+            subscores_dict["regulatory"] = subs["regulatory"]
 
         ranked.append({
             "business": name,
@@ -66,9 +89,9 @@ def rank(services: dict) -> dict:
             "opportunity_score": overall,
             "confidence_score": confidence,
             "data_completeness_score": completeness,
-            "subscores": {k: subs[k] for k in ("site", "market_gap", "financial", "competition_density", "govt")},
-            "formula": FORMULA,
-            "weights": WEIGHTS,
+            "subscores": subscores_dict,
+            "formula": formula_str,
+            "weights": weights_dict,
             "status": "SCORED",
             "computed_at": now_iso(),
         })

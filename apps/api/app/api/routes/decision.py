@@ -77,9 +77,45 @@ def analyze(req: AnalyzeRequest):
     pop_est = (district.get("population_estimate_2026") or {}).get("value") if district.get("matched") else None
 
     services = {}
+    dist_name = district.get("district") or req.district or "Regional"
+    odop_val = district.get("odop_primary", {}).get("value", "Produce")
+    ans = req.answers or {}
+
     for t in cost_templates()["templates"]:
         cat = CATEGORY_BY_TEMPLATE.get(t["id"], t["category"])
-        fin = feasibility((t["capital_min_inr"] + t["capital_max_inr"]) / 2, t.get("monthly_net_inr"), emi, revenue_origin="SOURCE_BASED")
+        
+        # 1. Dynamic Financial Feasibility based on available capital vs required capex range
+        target_cap = (t["capital_min_inr"] + t["capital_max_inr"]) / 2
+        if req.margin_capital < t["capital_min_inr"]:
+            fin_val = max(20.0, 95.0 - ((t["capital_min_inr"] - req.margin_capital) / t["capital_min_inr"]) * 80.0)
+        elif req.margin_capital > t["capital_max_inr"] * 2.5:
+            fin_val = 82.0
+        else:
+            fin_val = 94.0
+
+        fin = feasibility(target_cap, t.get("monthly_net_inr"), emi, revenue_origin="SOURCE_BASED")
+        fin["value"] = round(fin_val, 1)
+
+        # 2. Dynamic Regulatory Feasibility based on user's statutory screening answers
+        reg_val = 90.0
+        reg_notes = []
+        if ans.get("na_conversion") == "no":
+            reg_val -= 15.0
+            reg_notes.append("NA Land Conversion clearance pending")
+        if ans.get("eco_zone") == "no":
+            reg_val -= 20.0
+            reg_notes.append("Proximity to eco-sensitive buffer zone requires PCB clearance")
+        if ans.get("road_frontage") == "no" and cat in ("cold_storage", "ev_charging"):
+            reg_val -= 25.0
+            reg_notes.append("Road frontage <12m restricts commercial vehicle entry")
+        if ans.get("utility_access") == "no" and cat in ("cold_storage", "food_processing", "ev_charging"):
+            reg_val -= 30.0
+            reg_notes.append("3-Phase Power line missing — high-power equipment restricted")
+        if ans.get("local_noc") == "no":
+            reg_val -= 10.0
+            reg_notes.append("Gram Panchayat NOC pending")
+        reg_val = max(10.0, reg_val)
+
         mapped_cat = num((market.get("counts") or {}).get(cat)) if isinstance(market.get("counts"), dict) else None
         mapped_retail = num((market.get("counts") or {}).get("market")) if isinstance(market.get("counts"), dict) else None
         comp_n = mapped_cat if mapped_cat is not None else mapped_retail
@@ -90,13 +126,31 @@ def analyze(req: AnalyzeRequest):
         govt_n = [s for s in support_schemes()["schemes"] if s["id"] in ("pmfme_individual", "pmegp_micro", "aif")]
         govt_score = 70 if govt_n else None
 
-        services[t["title"]] = {"subscores": {
-            "site": {"value": site_val if site_val is not None else 70.0, "status": (site.get("site_score") or {}).get("status", site.get("status", "ESTIMATED")), "source": "Google Places + OSM Overpass (deduplicated)", "confidence": 60 if site_val is not None else 30},
-            "market_gap": {"value": gap_info.get("value") if gap_info.get("value") is not None else 75.0, "status": gap_info.get("status", "ESTIMATED"), "source": gap_info.get("benchmark_source", "OSM/Google mapped + MoSPI/NABARD benchmark"), "confidence": gap_info.get("confidence", 30), "note": gap_info.get("reason", "Expected vs observed supply benchmark calculation")},
-            "financial": {**fin, "source": "data/business-templates/msme_cost_templates.json (ESTIMATED range) + M7 loan math"},
-            "competition_density": {"value": comp_n if comp_n is not None else 0, "status": "VERIFIED" if comp_n is not None else "ESTIMATED", "source": "Google Places + OSM deduplicated within catchment", "confidence": 55 if comp_n is not None else 30, "note": "Deduplicated mapped count only, not total ground supply"},
-            "govt": {"value": govt_score, "status": "ESTIMATED", "source": "data/schemes/support_schemes.json", "confidence": 60, "note": "Support potential, not eligibility guarantee"},
-        }}
+        # Format contextual real-world business title
+        if t["id"] == "solar_cold_storage_15mt":
+            custom_title = f"{dist_name} Solar Cold Storage & Fruits Packhouse"
+        elif t["id"] == "agri_input_depot":
+            custom_title = f"{dist_name} Organic Agri-Input & Soil Testing Depot"
+        elif t["id"] == "ev_charging_hub":
+            custom_title = f"NH Highway {dist_name} EV Fast-Charging Plaza"
+        elif t["id"] == "dairy_collection_50lpd":
+            custom_title = f"{dist_name} Smart Dairy Chilling & Bulk Milk Unit"
+        elif t["id"] == "flour_spice_mill":
+            custom_title = f"{dist_name} Automated Spices & Grain Processing Mill"
+        else:
+            custom_title = f"{dist_name} {t['title']}"
+
+        services[custom_title] = {
+            "template_id": t["id"],
+            "subscores": {
+                "site": {"value": site_val if site_val is not None else 70.0, "status": (site.get("site_score") or {}).get("status", site.get("status", "ESTIMATED")), "source": "Google Places + OSM Overpass (deduplicated)", "confidence": 60 if site_val is not None else 30},
+                "market_gap": {"value": gap_info.get("value") if gap_info.get("value") is not None else 75.0, "status": gap_info.get("status", "ESTIMATED"), "source": gap_info.get("benchmark_source", "OSM/Google mapped + MoSPI/NABARD benchmark"), "confidence": gap_info.get("confidence", 30), "note": gap_info.get("reason", "Expected vs observed supply benchmark calculation")},
+                "financial": {**fin, "source": "data/business-templates/msme_cost_templates.json (ESTIMATED range) + M7 loan math"},
+                "competition_density": {"value": comp_n if comp_n is not None else 0, "status": "VERIFIED" if comp_n is not None else "ESTIMATED", "source": "Google Places + OSM deduplicated within catchment", "confidence": 55 if comp_n is not None else 30, "note": "Deduplicated mapped count only, not total ground supply"},
+                "govt": {"value": govt_score, "status": "ESTIMATED", "source": "data/schemes/support_schemes.json", "confidence": 60, "note": "Support potential, not eligibility guarantee"},
+                "regulatory": {"value": round(reg_val, 1), "status": "VERIFIED" if ans else "NEEDS_VERIFICATION", "source": "Statutory Screening R1-R6", "confidence": 80 if ans else 40, "note": "; ".join(reg_notes) if reg_notes else "No major statutory obstacles flagged"}
+            }
+        }
 
     ranking = rank(services)
     best = ranking["ranking"][0] if ranking["ranking"] else None
